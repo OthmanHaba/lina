@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Servers\LogSourceController;
 use App\Http\Controllers\Servers\ServerController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Middleware\EnsureTeamMembership;
@@ -17,6 +18,9 @@ Route::prefix('{current_team}')
         Route::get('servers/{server}', [ServerController::class, 'show'])->name('servers.show');
         Route::post('servers/{server}/token', [ServerController::class, 'regenerateToken'])->name('servers.token');
         Route::delete('servers/{server}', [ServerController::class, 'destroy'])->name('servers.destroy');
+        Route::post('servers/{server}/sources', [LogSourceController::class, 'store'])->name('servers.sources.store');
+        Route::patch('servers/{server}/sources/{source}', [LogSourceController::class, 'update'])->name('servers.sources.update');
+        Route::delete('servers/{server}/sources/{source}', [LogSourceController::class, 'destroy'])->name('servers.sources.destroy');
     });
 
 Route::middleware(['auth'])->group(function () {
