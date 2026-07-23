@@ -42,6 +42,19 @@ test('file sources require at least one path', function () {
         ->assertSessionHasErrors('config.paths');
 });
 
+test('file sources cannot be created without a config key at all', function () {
+    [$user, $team, $server] = sourceOwner();
+
+    $this->actingAs($user)
+        ->post(route('servers.sources.store', ['current_team' => $team->slug, 'server' => $server->id]), [
+            'type' => 'file',
+            'name' => 'app-logs',
+        ])
+        ->assertSessionHasErrors('config.paths');
+
+    expect($server->logSources()->count())->toBe(0);
+});
+
 test('nginx sources get default paths', function () {
     [$user, $team, $server] = sourceOwner();
 

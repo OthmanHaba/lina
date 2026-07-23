@@ -12,14 +12,17 @@ class SaveLogSourceRequest extends FormRequest
     public function rules(): array
     {
         $type = LogSourceType::tryFrom((string) $this->input('type'));
-        $hasConfig = $this->has('config');
+
+        // Config rules always apply on store; on update only when the request
+        // includes a config key (partial updates keep the stored config).
+        $enforceConfig = $this->route('source') === null || $this->has('config');
 
         return [
             'type' => ['required', Rule::enum(LogSourceType::class)],
             'name' => ['required', 'string', 'max:100'],
             'enabled' => ['sometimes', 'boolean'],
             'config' => ['sometimes', 'array'],
-            ...($hasConfig ? match ($type) {
+            ...($enforceConfig ? match ($type) {
                 LogSourceType::Systemd => [
                     'config.units' => ['sometimes', 'array'],
                     'config.units.*' => ['string', 'max:255'],
