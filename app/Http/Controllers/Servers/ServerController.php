@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Servers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Servers\StoreServerRequest;
+use App\Models\LogSource;
 use App\Models\Server;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -37,13 +39,15 @@ class ServerController extends Controller
      */
     public function store(StoreServerRequest $request): RedirectResponse
     {
+        $plain = Str::random(40);
+
         $server = Server::create([
             'team_id' => $request->user()->current_team_id,
             'name' => $request->validated('name'),
-            'token_hash' => 'pending',
+            'token_hash' => hash('sha256', $plain),
         ]);
 
-        $plain = $server->newToken();
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Server created.')]);
 
         return to_route('servers.show', ['current_team' => $request->route('current_team'), 'server' => $server->id])
             ->with('plainToken', $plain);
@@ -66,7 +70,7 @@ class ServerController extends Controller
                 'lastSeenAt' => $server->last_seen_at?->toISOString(),
                 'bytesToday' => $server->bytesToday(),
             ],
-            'sources' => $server->logSources()->get()->map(fn ($source) => [
+            'sources' => $server->logSources()->get()->map(fn (LogSource $source) => [
                 'id' => $source->id,
                 'type' => $source->type->value,
                 'name' => $source->name,
