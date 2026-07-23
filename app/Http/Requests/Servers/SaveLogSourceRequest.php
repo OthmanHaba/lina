@@ -12,13 +12,14 @@ class SaveLogSourceRequest extends FormRequest
     public function rules(): array
     {
         $type = LogSourceType::tryFrom((string) $this->input('type'));
+        $hasConfig = $this->has('config');
 
         return [
             'type' => ['required', Rule::enum(LogSourceType::class)],
             'name' => ['required', 'string', 'max:100'],
             'enabled' => ['sometimes', 'boolean'],
             'config' => ['sometimes', 'array'],
-            ...match ($type) {
+            ...($hasConfig ? match ($type) {
                 LogSourceType::Systemd => [
                     'config.units' => ['sometimes', 'array'],
                     'config.units.*' => ['string', 'max:255'],
@@ -36,7 +37,7 @@ class SaveLogSourceRequest extends FormRequest
                     'config.paths.*' => ['string', 'max:1024'],
                 ],
                 default => [],
-            },
+            } : []),
         ];
     }
 

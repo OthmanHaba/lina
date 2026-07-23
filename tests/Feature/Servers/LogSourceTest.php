@@ -86,6 +86,23 @@ test('sources can be deleted', function () {
     $this->assertDatabaseCount('log_sources', 0);
 });
 
+test('updating without a config key keeps the existing config', function () {
+    [$user, $team, $server] = sourceOwner();
+    $source = $server->logSources()->create(['type' => 'file', 'name' => 'app', 'config' => ['paths' => ['/var/log/app/*.log']], 'enabled' => true]);
+
+    $this->actingAs($user)
+        ->patch(route('servers.sources.update', ['current_team' => $team->slug, 'server' => $server->id, 'source' => $source->id]), [
+            'type' => 'file',
+            'name' => 'app',
+            'enabled' => false,
+        ])
+        ->assertRedirect();
+
+    $source->refresh();
+    expect($source->config['paths'])->toBe(['/var/log/app/*.log'])
+        ->and($source->enabled)->toBeFalse();
+});
+
 test('sources of other teams servers are unreachable', function () {
     [$user, $team] = sourceOwner();
     $foreignServer = Server::factory()->create();

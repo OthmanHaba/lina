@@ -42,7 +42,7 @@ class LogSourceController extends Controller
         $source->update([
             'type' => $request->validated('type'),
             'name' => $request->validated('name'),
-            'config' => $request->sourceConfig(),
+            'config' => $request->has('config') ? $request->sourceConfig() : $source->config,
             'enabled' => $request->validated('enabled', true),
         ]);
 
