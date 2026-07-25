@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Servers\InstallScriptController;
 use App\Http\Controllers\Servers\LogSourceController;
 use App\Http\Controllers\Servers\ServerController;
 use App\Http\Controllers\Teams\TeamInvitationController;
@@ -8,6 +9,8 @@ use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
+
+Route::get('install/{token}', InstallScriptController::class)->name('servers.install');
 
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
