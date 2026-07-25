@@ -16,6 +16,7 @@ fi
 echo "==> Installing Grafana Alloy"
 if command -v apt-get >/dev/null 2>&1; then
     ENV_FILE=/etc/default/alloy
+    apt-get update -qq
     apt-get install -y gpg curl >/dev/null
     mkdir -p /etc/apt/keyrings
     curl -fsSL https://apt.grafana.com/gpg.key | gpg --dearmor --yes -o /etc/apt/keyrings/grafana.gpg
@@ -95,7 +96,7 @@ UNIT
 
 echo "==> Fetching initial config and starting Alloy"
 systemctl daemon-reload
-/usr/local/bin/lina-agent-update
+/usr/local/bin/lina-agent-update || echo "warning: initial config fetch failed; the 60s timer will retry" >&2
 systemctl enable --now alloy
 systemctl enable --now lina-agent-update.timer
 

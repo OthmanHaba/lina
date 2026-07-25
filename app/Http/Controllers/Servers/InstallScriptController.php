@@ -20,6 +20,7 @@ class InstallScriptController extends Controller
             'baseUrl' => rtrim(config('app.url'), '/'),
         ])->render();
 
+        // Blade strips a leading #! line at parse time, so the shebang is prepended here.
         $script = "#!/usr/bin/env bash\n".$script;
 
         return response($script, 200, ['Content-Type' => 'text/plain']);
