@@ -20,7 +20,10 @@ test('the install script embeds the token and base url', function () {
         ->toContain('apt.grafana.com')
         ->toContain('rpm.grafana.com')
         // The alloy user must be able to read the config the root-owned updater writes.
-        ->toContain('chmod 0644 /etc/alloy/config.alloy');
+        ->toContain('chmod 0644 /etc/alloy/config.alloy')
+        // ...and to read the journal and docker socket it collects from.
+        ->toContain('usermod -aG systemd-journal alloy')
+        ->toContain('usermod -aG docker alloy');
 });
 
 test('unknown tokens 404', function () {

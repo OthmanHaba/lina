@@ -40,6 +40,12 @@ else
     exit 1
 fi
 
+echo "==> Granting the alloy user access to log sources"
+usermod -aG systemd-journal alloy 2>/dev/null || true
+if [ -S /var/run/docker.sock ] && getent group docker >/dev/null; then
+    usermod -aG docker alloy
+fi
+
 echo "==> Configuring agent credentials"
 touch "$ENV_FILE"
 sed -i '/^LINA_TOKEN=/d;/^LINA_BASE_URL=/d' "$ENV_FILE"
