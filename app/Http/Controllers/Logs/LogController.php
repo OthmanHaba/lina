@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LogSource;
 use App\Models\Server;
 use App\Services\LogQlBuilder;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -59,14 +60,18 @@ class LogController extends Controller
 
         $sources = array_values(array_filter(explode(',', $validated['sources'] ?? '')));
 
-        $response = Http::withHeaders(['X-Scope-OrgID' => 'team-'.$teamId])
-            ->get(rtrim(config('services.loki.url'), '/').'/loki/api/v1/query_range', [
-                'query' => $builder->build($serverIds, $sources, $validated['search'] ?? null),
-                'start' => ($validated['start'] ?? now()->subHour()->timestamp) * 1_000_000_000,
-                'end' => ($validated['end'] ?? now()->timestamp) * 1_000_000_000,
-                'limit' => 500,
-                'direction' => 'backward',
-            ]);
+        try {
+            $response = Http::withHeaders(['X-Scope-OrgID' => 'team-'.$teamId])
+                ->get(rtrim(config('services.loki.url'), '/').'/loki/api/v1/query_range', [
+                    'query' => $builder->build($serverIds, $sources, $validated['search'] ?? null),
+                    'start' => ($validated['start'] ?? now()->subHour()->timestamp) * 1_000_000_000,
+                    'end' => ($validated['end'] ?? now()->timestamp) * 1_000_000_000,
+                    'limit' => 500,
+                    'direction' => 'backward',
+                ]);
+        } catch (ConnectionException) {
+            return response()->json(['entries' => [], 'error' => 'Log storage is unavailable right now.'], 502);
+        }
 
         if ($response->failed()) {
             return response()->json(['entries' => [], 'error' => 'Log storage is unavailable right now.'], 502);
@@ -79,6 +84,7 @@ class LogController extends Controller
                 'line' => $value[1],
                 'labels' => $stream['stream'],
             ]))
+            // Loki's `backward` direction sorts within each stream only; merging streams needs this final sort.
             ->sortByDesc('ts')
             ->values();
 

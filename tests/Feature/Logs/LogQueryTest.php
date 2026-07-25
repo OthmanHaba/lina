@@ -99,3 +99,14 @@ test('teams with no servers get an empty result without calling loki', function 
 
     Http::assertNothingSent();
 });
+
+test('an unreachable loki returns a 502 instead of a server error', function () {
+    [$user, $team] = logsUser();
+    Server::factory()->for($team)->create();
+    Http::fake(['*/loki/api/v1/query_range*' => Http::failedConnection()]);
+
+    $this->actingAs($user)
+        ->getJson(route('logs.query', ['current_team' => $team->slug]))
+        ->assertStatus(502)
+        ->assertExactJson(['entries' => [], 'error' => 'Log storage is unavailable right now.']);
+});
