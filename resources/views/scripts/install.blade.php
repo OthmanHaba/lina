@@ -63,6 +63,7 @@ STATUS=\$(curl -sS -w '%{http_code}' -o "\$BODY" -D "\$HEADERS" \
     "\$LINA_BASE_URL/api/agent/config")
 if [ "\$STATUS" = "200" ]; then
     mv "\$BODY" /etc/alloy/config.alloy
+    chmod 0644 /etc/alloy/config.alloy
     grep -i '^etag:' "\$HEADERS" | awk '{print \$2}' | tr -d '\r' > "\$ETAG_FILE"
     systemctl try-reload-or-restart alloy
 elif [ "\$STATUS" != "304" ]; then
