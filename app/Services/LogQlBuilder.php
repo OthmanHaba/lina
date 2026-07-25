@@ -13,7 +13,7 @@ class LogQlBuilder
      */
     public function build(array $serverIds, array $sources, ?string $search): string
     {
-        $matchers = ['server_id=~"'.implode('|', $serverIds).'"'];
+        $matchers = ['server_id=~"^('.implode('|', $serverIds).')$"'];
 
         if ($sources !== []) {
             $matchers[] = 'source=~"'.$this->escape(implode('|', array_map($this->escapeRegexAlternative(...), $sources))).'"';

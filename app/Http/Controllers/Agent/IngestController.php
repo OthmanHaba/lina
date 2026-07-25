@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Agent;
 use App\Http\Controllers\Controller;
 use App\Models\Server;
 use App\Models\UsageRecord;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
@@ -24,12 +25,16 @@ class IngestController extends Controller
 
         $this->recordUsage($server, strlen($body));
 
-        $response = Http::withHeaders([
-            'X-Scope-OrgID' => 'team-'.$server->team_id,
-        ])->withBody($body, $request->header('Content-Type', 'application/x-protobuf'))
-            ->post(rtrim(config('services.loki.url'), '/').'/loki/api/v1/push');
+        try {
+            $response = Http::withHeaders([
+                'X-Scope-OrgID' => 'team-'.$server->team_id,
+            ])->withBody($body, $request->header('Content-Type', 'application/x-protobuf'))
+                ->post(rtrim(config('services.loki.url'), '/').'/loki/api/v1/push');
 
-        return response($response->body(), $response->status());
+            return response($response->body(), $response->status());
+        } catch (ConnectionException) {
+            return response('Log storage unavailable', 503);
+        }
     }
 
     /**

@@ -85,3 +85,11 @@ test('pushes without a valid token are rejected and never forwarded', function (
 
     Http::assertNothingSent();
 });
+
+test('an unreachable loki returns 503 to the agent', function () {
+    Http::fake(['*/loki/api/v1/push' => Http::failedConnection()]);
+    $server = Server::factory()->create();
+    $plain = $server->newToken();
+
+    pushAs($plain)->assertStatus(503);
+});

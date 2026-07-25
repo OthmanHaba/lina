@@ -83,7 +83,7 @@ test('foreign server ids are stripped from the query', function () {
     Http::assertSent(function ($request) use ($mine, $foreign) {
         parse_str(parse_url($request->url(), PHP_URL_QUERY), $params);
 
-        return str_contains($params['query'], 'server_id=~"'.$mine->id.'"')
+        return str_contains($params['query'], 'server_id=~"^('.$mine->id.')$"')
             && ! str_contains($params['query'], (string) $foreign->id);
     });
 });
