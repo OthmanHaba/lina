@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Server;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -59,7 +60,11 @@ class AppServiceProvider extends ServiceProvider
     {
         RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->ip()));
 
-        RateLimiter::for('ingest', fn (Request $request) => Limit::perMinute(config('services.loki.ingest_rpm'))
-            ->by('ingest:'.($request->attributes->get('server')?->id ?? $request->ip())));
+        RateLimiter::for('ingest', function (Request $request) {
+            $server = $request->attributes->get('server');
+
+            return Limit::perMinute((int) config('services.loki.ingest_rpm'))
+                ->by('ingest:'.($server instanceof Server ? $server->id : $request->ip()));
+        });
     }
 }

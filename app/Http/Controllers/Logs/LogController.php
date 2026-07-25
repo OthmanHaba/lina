@@ -77,16 +77,24 @@ class LogController extends Controller
             return response()->json(['entries' => [], 'error' => 'Log storage is unavailable right now.'], 502);
         }
 
-        $entries = collect($response->json('data.result', []))
-            ->flatMap(fn (array $stream) => collect($stream['values'])->map(fn (array $value) => [
-                'ts' => $value[0],
-                'time' => Carbon::createFromTimestampMs((int) ($value[0] / 1_000_000))->toISOString(),
-                'line' => $value[1],
-                'labels' => $stream['stream'],
-            ]))
-            // Loki's `backward` direction sorts within each stream only; merging streams needs this final sort.
-            ->sortByDesc('ts')
-            ->values();
+        /** @var list<array{stream: array<string, string>, values: list<array{0: string, 1: string}>}> $streams */
+        $streams = $response->json('data.result', []);
+
+        $entries = [];
+
+        foreach ($streams as $stream) {
+            foreach ($stream['values'] as $value) {
+                $entries[] = [
+                    'ts' => $value[0],
+                    'time' => Carbon::createFromTimestampMs((int) ((float) $value[0] / 1_000_000))->toISOString(),
+                    'line' => $value[1],
+                    'labels' => $stream['stream'],
+                ];
+            }
+        }
+
+        // Loki's `backward` direction sorts within each stream only; merging streams needs this final sort.
+        usort($entries, fn (array $a, array $b) => [strlen($b['ts']), $b['ts']] <=> [strlen($a['ts']), $a['ts']]);
 
         return response()->json(['entries' => $entries]);
     }

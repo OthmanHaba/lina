@@ -24,6 +24,7 @@ class LogSourceFactory extends Factory
         ];
     }
 
+    /** @param  array<int, string>  $paths */
     public function file(array $paths = ['/var/log/app/*.log']): static
     {
         return $this->state(fn () => ['type' => LogSourceType::File, 'config' => ['paths' => $paths]]);
@@ -34,11 +35,13 @@ class LogSourceFactory extends Factory
         return $this->state(fn () => ['type' => LogSourceType::Nginx, 'config' => ['access_log' => '/var/log/nginx/access.log', 'error_log' => '/var/log/nginx/error.log']]);
     }
 
+    /** @param  array<int, string>  $containers */
     public function docker(array $containers = []): static
     {
         return $this->state(fn () => ['type' => LogSourceType::Docker, 'config' => ['containers' => $containers]]);
     }
 
+    /** @param  array<int, string>  $units */
     public function systemd(array $units = []): static
     {
         return $this->state(fn () => ['type' => LogSourceType::Systemd, 'config' => ['units' => $units]]);
