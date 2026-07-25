@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Logs\LogController;
 use App\Http\Controllers\Servers\InstallScriptController;
 use App\Http\Controllers\Servers\LogSourceController;
 use App\Http\Controllers\Servers\ServerController;
@@ -24,6 +25,8 @@ Route::prefix('{current_team}')
         Route::post('servers/{server}/sources', [LogSourceController::class, 'store'])->name('servers.sources.store');
         Route::patch('servers/{server}/sources/{source}', [LogSourceController::class, 'update'])->name('servers.sources.update');
         Route::delete('servers/{server}/sources/{source}', [LogSourceController::class, 'destroy'])->name('servers.sources.destroy');
+        Route::get('logs', [LogController::class, 'index'])->name('logs.index');
+        Route::get('logs/query', [LogController::class, 'query'])->name('logs.query');
     });
 
 Route::middleware(['auth'])->group(function () {
