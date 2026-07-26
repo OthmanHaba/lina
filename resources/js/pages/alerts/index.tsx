@@ -526,7 +526,9 @@ function ChannelForm({
                             />
                             <p className="text-xs text-muted-foreground">
                                 POSTed as JSON:{' '}
-                                {'{ alert, state, measuredValue, firedAt }'}
+                                {
+                                    '{ alert: {id, name, type}, state, measured_value, threshold, window_minutes, servers, sources, search, fired_at, url }'
+                                }
                             </p>
                             <InputError message={errors['config.url']} />
                         </div>

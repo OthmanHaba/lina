@@ -10,4 +10,4 @@ Schedule::call(function () {
         ->delete();
 })->daily()->description('Delete expired team invitations');
 
-Schedule::command('alerts:evaluate')->everyMinute()->description('Evaluate log alerts');
+Schedule::command('alerts:evaluate')->everyMinute()->withoutOverlapping()->description('Evaluate log alerts');
