@@ -79,9 +79,15 @@ export default function LogsIndex({ servers, sources }: Props) {
     const { currentTeam } = usePage().props;
     const teamSlug = currentTeam?.slug ?? '';
 
-    const [serverId, setServerId] = useState<string>('all');
-    const [source, setSource] = useState<string>('all');
-    const [search, setSearch] = useState('');
+    // Seed filters from deep-link query params (e.g. from an alert).
+    const deepLink = new URLSearchParams(window.location.search);
+    const [serverId, setServerId] = useState<string>(
+        () => deepLink.get('servers')?.split(',')[0] ?? 'all',
+    );
+    const [source, setSource] = useState<string>(
+        () => deepLink.get('sources')?.split(',')[0] ?? 'all',
+    );
+    const [search, setSearch] = useState(() => deepLink.get('search') ?? '');
     const [range, setRange] = useState('1h');
     const [entries, setEntries] = useState<LogEntry[]>([]);
     const [loading, setLoading] = useState(false);
@@ -149,6 +155,19 @@ export default function LogsIndex({ servers, sources }: Props) {
         lastTs.current = result[0]?.ts ?? null;
         setLoading(false);
     };
+
+    // If we arrived with deep-link params, run the seeded search once on mount.
+    useEffect(() => {
+        if (
+            deepLink.has('servers') ||
+            deepLink.has('sources') ||
+            deepLink.has('search')
+        ) {
+            // Defer so the mount effect doesn't setState synchronously.
+            setTimeout(runSearch, 0);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         if (!live) {

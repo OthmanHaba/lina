@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid, ScrollText, Server } from 'lucide-react';
+import { Bell, BookOpen, FolderGit2, LayoutGrid, ScrollText, Server } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +15,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as alertsIndex } from '@/routes/alerts';
 import { index as logsIndex } from '@/routes/logs';
 import { index as serversIndex } from '@/routes/servers';
 import type { NavItem } from '@/types';
@@ -44,6 +45,13 @@ export function AppSidebar() {
                 ? logsIndex(page.props.currentTeam.slug)
                 : '/',
             icon: ScrollText,
+        },
+        {
+            title: 'Alerts',
+            href: page.props.currentTeam
+                ? alertsIndex(page.props.currentTeam.slug)
+                : '/',
+            icon: Bell,
         },
     ];
 
