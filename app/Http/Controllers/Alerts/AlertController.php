@@ -40,7 +40,7 @@ class AlertController extends Controller
                     'events' => $alert->events->map(fn (AlertEvent $event) => [
                         'state' => $event->state->value,
                         'measuredValue' => $event->measured_value,
-                        'createdAt' => $event->created_at->toISOString(),
+                        'createdAt' => $event->created_at?->toISOString(),
                     ]),
                 ]),
             'channels' => NotificationChannel::where('team_id', $teamId)
