@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Alerts\NotificationChannelController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Logs\LogController;
 use App\Http\Controllers\Servers\InstallScriptController;
@@ -27,6 +28,9 @@ Route::prefix('{current_team}')
         Route::delete('servers/{server}/sources/{source}', [LogSourceController::class, 'destroy'])->name('servers.sources.destroy');
         Route::get('logs', [LogController::class, 'index'])->name('logs.index');
         Route::get('logs/query', [LogController::class, 'query'])->name('logs.query');
+        Route::post('channels', [NotificationChannelController::class, 'store'])->name('channels.store');
+        Route::patch('channels/{channel}', [NotificationChannelController::class, 'update'])->name('channels.update');
+        Route::delete('channels/{channel}', [NotificationChannelController::class, 'destroy'])->name('channels.destroy');
     });
 
 Route::middleware(['auth'])->group(function () {
