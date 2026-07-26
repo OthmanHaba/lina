@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Alerts\AlertController;
 use App\Http\Controllers\Alerts\NotificationChannelController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Logs\LogController;
@@ -31,6 +32,10 @@ Route::prefix('{current_team}')
         Route::post('channels', [NotificationChannelController::class, 'store'])->name('channels.store');
         Route::patch('channels/{channel}', [NotificationChannelController::class, 'update'])->name('channels.update');
         Route::delete('channels/{channel}', [NotificationChannelController::class, 'destroy'])->name('channels.destroy');
+        Route::get('alerts', [AlertController::class, 'index'])->name('alerts.index');
+        Route::post('alerts', [AlertController::class, 'store'])->name('alerts.store');
+        Route::patch('alerts/{alert}', [AlertController::class, 'update'])->name('alerts.update');
+        Route::delete('alerts/{alert}', [AlertController::class, 'destroy'])->name('alerts.destroy');
     });
 
 Route::middleware(['auth'])->group(function () {
