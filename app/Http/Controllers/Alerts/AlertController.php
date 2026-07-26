@@ -41,7 +41,7 @@ class AlertController extends Controller
                         'state' => $event->state->value,
                         'measuredValue' => $event->measured_value,
                         'createdAt' => $event->created_at?->toISOString(),
-                    ]),
+                    ])->all(),
                 ]),
             'channels' => NotificationChannel::where('team_id', $teamId)
                 ->orderBy('name')
