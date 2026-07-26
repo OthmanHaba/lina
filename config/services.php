@@ -40,4 +40,8 @@ return [
         'ingest_rpm' => (int) env('LOKI_INGEST_RPM', 300),
     ],
 
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+    ],
+
 ];
