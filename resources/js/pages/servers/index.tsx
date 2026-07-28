@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 import { index, show, store } from '@/routes/servers';
 import type { ServerSummary } from '@/types';
 
@@ -24,6 +25,12 @@ const statusVariant = {
     online: 'default',
     offline: 'destructive',
     pending: 'secondary',
+} as const;
+
+const statusDot = {
+    online: 'bg-emerald-500',
+    offline: 'bg-red-500',
+    pending: 'bg-muted-foreground/40',
 } as const;
 
 export function formatBytes(bytes: number): string {
@@ -140,15 +147,23 @@ export default function ServersIndex({ servers }: Props) {
                                     current_team: teamSlug,
                                     server: server.id,
                                 })}
-                                className="flex items-center justify-between p-4 hover:bg-muted/50"
+                                className="flex items-center gap-3 p-4 hover:bg-muted/50"
                             >
-                                <div>
-                                    <p className="font-medium">{server.name}</p>
-                                    <p className="text-sm text-muted-foreground">
+                                <span
+                                    className={cn(
+                                        'size-2 shrink-0 rounded-full',
+                                        statusDot[server.status],
+                                    )}
+                                />
+                                <div className="min-w-0 flex-1">
+                                    <p className="truncate text-sm font-medium">
+                                        {server.name}
+                                    </p>
+                                    <p className="truncate text-sm text-muted-foreground">
                                         {server.hostname ?? 'Not connected yet'}
                                     </p>
                                 </div>
-                                <div className="flex items-center gap-4">
+                                <div className="flex shrink-0 items-center gap-4">
                                     <span className="text-sm text-muted-foreground">
                                         {formatBytes(server.bytesToday)} today
                                     </span>

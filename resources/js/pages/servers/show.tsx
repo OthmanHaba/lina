@@ -1,10 +1,12 @@
 import { Form, Head, router, usePage } from '@inertiajs/react';
 import { Copy, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import DailyBarChart from '@/components/charts/daily-bar-chart';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
@@ -155,7 +157,9 @@ function SourceForm({
                                 id="config_units"
                                 name="config_units"
                                 defaultValue={source?.config.units?.join('\n')}
-                                placeholder={'nginx.service\nphp8.4-fpm.service'}
+                                placeholder={
+                                    'nginx.service\nphp8.4-fpm.service'
+                                }
                                 className="min-h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm"
                             />
                         </div>
@@ -257,9 +261,7 @@ function RetentionCard({
     const [mode, setMode] = useState<'default' | 'custom'>(
         server.retentionDays === null ? 'default' : 'custom',
     );
-    const [days, setDays] = useState(
-        server.retentionDays ?? teamRetentionDays,
-    );
+    const [days, setDays] = useState(server.retentionDays ?? teamRetentionDays);
     const [saving, setSaving] = useState(false);
 
     const save = () => {
@@ -342,7 +344,6 @@ export default function ServerShow({
     const installCommand = plainToken
         ? `curl -sSL ${installBaseUrl}/${plainToken} | sudo bash`
         : null;
-    const maxUsageBytes = Math.max(...health.usage.map((day) => day.bytes));
 
     const copyCommand = async () => {
         if (!installCommand) {
@@ -373,8 +374,8 @@ export default function ServerShow({
                 {installCommand && (
                     <div className="space-y-2 rounded-xl border border-amber-400/50 bg-amber-50 p-4 dark:bg-amber-950/20">
                         <p className="font-medium">
-                            Run this on the server as root — the token is
-                            shown only once:
+                            Run this on the server as root — the token is shown
+                            only once:
                         </p>
                         <div className="flex items-center gap-2">
                             <code className="flex-1 overflow-x-auto rounded bg-background p-2 font-mono text-sm">
@@ -393,101 +394,140 @@ export default function ServerShow({
                 )}
 
                 <div className="grid gap-4 text-sm md:grid-cols-3">
-                    <div className="rounded-xl border p-4">
-                        <p className="text-muted-foreground">Last seen</p>
-                        <p className="font-medium">
-                            {server.lastSeenAt
-                                ? new Date(server.lastSeenAt).toLocaleString()
-                                : 'Never'}
-                        </p>
-                    </div>
-                    <div className="rounded-xl border p-4">
-                        <p className="text-muted-foreground">Agent</p>
-                        <p className="font-medium">
-                            {server.agentVersion ?? 'Unknown'}
-                        </p>
-                    </div>
-                    <div className="rounded-xl border p-4">
-                        <p className="text-muted-foreground">
-                            Ingested today
-                        </p>
-                        <p className="font-medium">
-                            {formatBytes(server.bytesToday)}
-                        </p>
-                    </div>
+                    <Card className="gap-1 py-4">
+                        <CardHeader className="px-4">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                Last seen
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-4">
+                            <p className="font-medium">
+                                {server.lastSeenAt
+                                    ? new Date(
+                                          server.lastSeenAt,
+                                      ).toLocaleString()
+                                    : 'Never'}
+                            </p>
+                        </CardContent>
+                    </Card>
+                    <Card className="gap-1 py-4">
+                        <CardHeader className="px-4">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                Agent
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-4">
+                            <p className="font-medium">
+                                {server.agentVersion ?? 'Unknown'}
+                            </p>
+                        </CardContent>
+                    </Card>
+                    <Card className="gap-1 py-4">
+                        <CardHeader className="px-4">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                Ingested today
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-4">
+                            <p className="font-medium">
+                                {formatBytes(server.bytesToday)}
+                            </p>
+                        </CardContent>
+                    </Card>
                 </div>
 
                 <div className="space-y-3">
                     <Heading variant="small" title="Agent health" />
 
                     <div className="grid gap-4 text-sm md:grid-cols-3">
-                        <div className="rounded-xl border p-4">
-                            <p className="text-muted-foreground">
-                                Last config poll
-                            </p>
-                            <p className="font-medium">
-                                {health.lastPollAt
-                                    ? new Date(
-                                          health.lastPollAt,
-                                      ).toLocaleString()
-                                    : 'Never'}
-                            </p>
-                        </div>
-                        <div className="rounded-xl border p-4">
-                            <p className="text-muted-foreground">
-                                Last log push
-                            </p>
-                            <p className="font-medium">
-                                {health.lastPushAt
-                                    ? new Date(
-                                          health.lastPushAt,
-                                      ).toLocaleString()
-                                    : 'Never'}
-                            </p>
-                        </div>
-                        <div className="rounded-xl border p-4">
-                            <p className="text-muted-foreground">Config</p>
-                            <p className="flex items-center gap-2 font-medium">
-                                <span
-                                    className={`inline-block size-2 rounded-full ${configStatusMeta[health.configStatus].dot}`}
-                                />
-                                {configStatusMeta[health.configStatus].label}
-                            </p>
-                            {health.configStatus === 'synced' && (
-                                <p className="text-muted-foreground">
-                                    {health.configSyncedAt
+                        <Card className="gap-1 py-4">
+                            <CardHeader className="px-4">
+                                <CardTitle className="text-sm font-medium text-muted-foreground">
+                                    Last config poll
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="px-4">
+                                <p className="font-medium">
+                                    {health.lastPollAt
                                         ? new Date(
-                                              health.configSyncedAt,
+                                              health.lastPollAt,
                                           ).toLocaleString()
-                                        : null}
+                                        : 'Never'}
                                 </p>
-                            )}
-                        </div>
+                            </CardContent>
+                        </Card>
+                        <Card className="gap-1 py-4">
+                            <CardHeader className="px-4">
+                                <CardTitle className="text-sm font-medium text-muted-foreground">
+                                    Last log push
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="px-4">
+                                <p className="font-medium">
+                                    {health.lastPushAt
+                                        ? new Date(
+                                              health.lastPushAt,
+                                          ).toLocaleString()
+                                        : 'Never'}
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card className="gap-1 py-4">
+                            <CardHeader className="px-4">
+                                <CardTitle className="text-sm font-medium text-muted-foreground">
+                                    Config
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="px-4">
+                                <p className="flex items-center gap-2 font-medium">
+                                    <span
+                                        className={`inline-block size-2 rounded-full ${configStatusMeta[health.configStatus].dot}`}
+                                    />
+                                    {
+                                        configStatusMeta[health.configStatus]
+                                            .label
+                                    }
+                                </p>
+                                {health.configStatus === 'synced' && (
+                                    <p className="text-muted-foreground">
+                                        {health.configSyncedAt
+                                            ? new Date(
+                                                  health.configSyncedAt,
+                                              ).toLocaleString()
+                                            : null}
+                                    </p>
+                                )}
+                            </CardContent>
+                        </Card>
                     </div>
 
-                    <div className="rounded-xl border p-4">
-                        <p className="mb-3 text-sm text-muted-foreground">
-                            Ingest, last 14 days
-                        </p>
-                        {health.usage.every((day) => day.bytes === 0) ? (
-                            <p className="text-sm text-muted-foreground">
-                                No ingest in the last 14 days
-                            </p>
-                        ) : (
-                            <div className="flex h-24 items-end gap-1">
-                                {health.usage.map((day) => (
-                                    <div
-                                        key={day.date}
-                                        className="flex-1 rounded-t bg-primary/70"
-                                        style={{
-                                            height: `${Math.max((day.bytes / maxUsageBytes) * 100, 2)}%`,
-                                        }}
-                                        title={`${day.date}: ${formatBytes(day.bytes)}`}
-                                    />
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    <Card className="gap-2 py-4">
+                        <CardHeader className="px-4">
+                            <CardTitle className="text-sm font-medium">
+                                Ingest, last 14 days
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-4">
+                            {health.usage.every((day) => day.bytes === 0) ? (
+                                <p className="text-sm text-muted-foreground">
+                                    No ingest in the last 14 days
+                                </p>
+                            ) : (
+                                <DailyBarChart
+                                    data={health.usage.map((day) => ({
+                                        label: new Date(
+                                            day.date,
+                                        ).toLocaleDateString(undefined, {
+                                            month: 'short',
+                                            day: 'numeric',
+                                        }),
+                                        value: day.bytes,
+                                    }))}
+                                    formatValue={formatBytes}
+                                />
+                            )}
+                        </CardContent>
+                    </Card>
                 </div>
 
                 <RetentionCard
@@ -569,8 +609,7 @@ export default function ServerShow({
                                             onClick={() =>
                                                 router.delete(
                                                     destroySource({
-                                                        current_team:
-                                                            teamSlug,
+                                                        current_team: teamSlug,
                                                         server: server.id,
                                                         source: source.id,
                                                     }),
@@ -657,7 +696,9 @@ export default function ServerShow({
     );
 }
 
-ServerShow.layout = (props: Props & { currentTeam?: { slug: string } | null }) => ({
+ServerShow.layout = (
+    props: Props & { currentTeam?: { slug: string } | null },
+) => ({
     breadcrumbs: [
         {
             title: 'Servers',
