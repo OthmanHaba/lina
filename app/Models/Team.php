@@ -19,14 +19,16 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property string $slug
  * @property bool $is_personal
+ * @property int $retention_days
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, TeamInvitation> $invitations
  * @property-read Collection<int, Membership> $memberships
  * @property-read Collection<int, User> $members
+ * @property-read Collection<int, Server> $servers
  */
-#[Fillable(['name', 'slug', 'is_personal'])]
+#[Fillable(['name', 'slug', 'is_personal', 'retention_days'])]
 class Team extends Model
 {
     /** @use HasFactory<TeamFactory> */
@@ -96,6 +98,16 @@ class Team extends Model
     }
 
     /**
+     * Get all servers for this team.
+     *
+     * @return HasMany<Server, $this>
+     */
+    public function servers(): HasMany
+    {
+        return $this->hasMany(Server::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -104,6 +116,7 @@ class Team extends Model
     {
         return [
             'is_personal' => 'boolean',
+            'retention_days' => 'integer',
         ];
     }
 

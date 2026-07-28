@@ -38,6 +38,7 @@ return [
     'loki' => [
         'url' => env('LOKI_URL', 'http://localhost:3100'),
         'ingest_rpm' => (int) env('LOKI_INGEST_RPM', 300),
+        'overrides_path' => env('LOKI_OVERRIDES_PATH', storage_path('app/loki/overrides.yaml')),
     ],
 
     'telegram' => [

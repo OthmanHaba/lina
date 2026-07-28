@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
  * @property string $token_hash
  * @property string|null $hostname
  * @property string|null $agent_version
+ * @property int|null $retention_days
  * @property Carbon|null $last_seen_at
  * @property Carbon|null $last_poll_at
  * @property Carbon|null $last_push_at
@@ -29,7 +30,7 @@ use Illuminate\Support\Str;
  * @property-read Collection<int, LogSource> $logSources
  * @property-read Collection<int, UsageRecord> $usageRecords
  */
-#[Fillable(['team_id', 'name', 'token_hash', 'hostname', 'agent_version', 'last_seen_at', 'last_poll_at', 'last_push_at', 'config_synced_at', 'synced_config_hash'])]
+#[Fillable(['team_id', 'name', 'token_hash', 'hostname', 'agent_version', 'retention_days', 'last_seen_at', 'last_poll_at', 'last_push_at', 'config_synced_at', 'synced_config_hash'])]
 class Server extends Model
 {
     /** @use HasFactory<ServerFactory> */
@@ -136,6 +137,7 @@ class Server extends Model
     protected function casts(): array
     {
         return [
+            'retention_days' => 'integer',
             'last_seen_at' => 'datetime',
             'last_poll_at' => 'datetime',
             'last_push_at' => 'datetime',
