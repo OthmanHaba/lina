@@ -50,15 +50,25 @@ export default function TimeseriesWidget({
         );
     }
 
+    const labelCounts = new Map<string, number>();
+    const uniqueLabels = data.series.map((series) => {
+        const count = (labelCounts.get(series.label) ?? 0) + 1;
+        labelCounts.set(series.label, count);
+
+        return count === 1 ? series.label : `${series.label} (${count})`;
+    });
+
     const rows = new Map<number, Record<string, number>>();
 
-    for (const series of data.series) {
+    data.series.forEach((series, index) => {
+        const label = uniqueLabels[index];
+
         for (const [ts, value] of series.points) {
             const row = rows.get(ts) ?? {};
-            row[series.label] = value;
+            row[label] = value;
             rows.set(ts, row);
         }
-    }
+    });
 
     const chartData = [...rows.entries()]
         .sort(([a], [b]) => a - b)
@@ -97,13 +107,14 @@ export default function TimeseriesWidget({
                 />
                 {data.series.map((series, index) => {
                     const color = CHART_COLORS[index % CHART_COLORS.length];
+                    const label = uniqueLabels[index];
 
                     if (kind === 'line') {
                         return (
                             <Line
-                                key={series.label}
+                                key={label}
                                 type="monotone"
-                                dataKey={series.label}
+                                dataKey={label}
                                 stroke={color}
                                 dot={false}
                                 strokeWidth={2}
@@ -114,9 +125,9 @@ export default function TimeseriesWidget({
                     if (kind === 'area') {
                         return (
                             <Area
-                                key={series.label}
+                                key={label}
                                 type="monotone"
-                                dataKey={series.label}
+                                dataKey={label}
                                 stroke={color}
                                 fill={color}
                                 fillOpacity={0.2}
@@ -127,8 +138,8 @@ export default function TimeseriesWidget({
 
                     return (
                         <Bar
-                            key={series.label}
-                            dataKey={series.label}
+                            key={label}
+                            dataKey={label}
                             fill={color}
                             stackId="a"
                             radius={[2, 2, 0, 0]}
