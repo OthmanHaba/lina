@@ -2,8 +2,8 @@ import { Head, Link } from '@inertiajs/react';
 import { Eye, LogOut, Pencil, Plus } from 'lucide-react';
 import { useState } from 'react';
 import CreateTeamModal from '@/components/create-team-modal';
-import Heading from '@/components/heading';
 import LeaveTeamModal from '@/components/leave-team-modal';
+import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,22 +32,18 @@ export default function TeamsIndex({ teams }: Props) {
         <>
             <Head title="Teams" />
 
-            <h1 className="sr-only">Teams</h1>
-
             <div className="flex flex-col space-y-6">
-                <div className="flex items-center justify-between">
-                    <Heading
-                        variant="small"
-                        title="Teams"
-                        description="Manage your teams and team memberships"
-                    />
-
-                    <CreateTeamModal>
-                        <Button data-test="teams-new-team-button">
-                            <Plus /> New team
-                        </Button>
-                    </CreateTeamModal>
-                </div>
+                <PageHeader
+                    title="Teams"
+                    description="Manage your teams and team memberships"
+                    action={
+                        <CreateTeamModal>
+                            <Button data-test="teams-new-team-button">
+                                <Plus /> New team
+                            </Button>
+                        </CreateTeamModal>
+                    }
+                />
 
                 <div className="space-y-3">
                     {teams.map((team) => {

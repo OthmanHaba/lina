@@ -1,7 +1,8 @@
 import { Head, usePage } from '@inertiajs/react';
-import { Pause, Play, Search } from 'lucide-react';
+import { Pause, Play, Search, SearchX } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Heading from '@/components/heading';
+import EmptyState from '@/components/empty-state';
+import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -66,7 +67,7 @@ function LogRow({ entry }: { entry: LogEntry }) {
                             </Badge>
                         ))}
                     </div>
-                    <pre className="overflow-x-auto whitespace-pre-wrap rounded bg-muted p-2">
+                    <pre className="overflow-x-auto rounded bg-muted p-2 whitespace-pre-wrap">
                         {pretty ?? entry.line}
                     </pre>
                 </div>
@@ -91,6 +92,7 @@ export default function LogsIndex({ servers, sources }: Props) {
     const [range, setRange] = useState('1h');
     const [entries, setEntries] = useState<LogEntry[]>([]);
     const [loading, setLoading] = useState(false);
+    const [searched, setSearched] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [live, setLive] = useState(false);
     const lastTs = useRef<string | null>(null);
@@ -134,9 +136,7 @@ export default function LogsIndex({ servers, sources }: Props) {
             };
 
             if (!response.ok) {
-                setError(
-                    data.error ?? 'Log storage is unavailable right now.',
-                );
+                setError(data.error ?? 'Log storage is unavailable right now.');
 
                 return data.entries ?? [];
             }
@@ -154,6 +154,7 @@ export default function LogsIndex({ servers, sources }: Props) {
         setEntries(result);
         lastTs.current = result[0]?.ts ?? null;
         setLoading(false);
+        setSearched(true);
     };
 
     // If we arrived with deep-link params, run the seeded search once on mount.
@@ -205,10 +206,9 @@ export default function LogsIndex({ servers, sources }: Props) {
             <Head title="Logs" />
 
             <div className="flex h-full flex-col space-y-4 p-4">
-                <Heading
-                    variant="small"
+                <PageHeader
                     title="Logs"
-                    description="Search and live-tail logs across your servers"
+                    description="Search and live-tail across all your servers."
                 />
 
                 <div className="flex flex-wrap items-center gap-2">
@@ -300,11 +300,21 @@ export default function LogsIndex({ servers, sources }: Props) {
 
                 <div className="min-h-0 flex-1 overflow-y-auto rounded-xl border">
                     {entries.length === 0 ? (
-                        <p className="p-8 text-center text-sm text-muted-foreground">
-                            {loading
-                                ? 'Searching…'
-                                : 'No log entries. Adjust filters and search.'}
-                        </p>
+                        loading ? (
+                            <p className="p-8 text-center text-sm text-muted-foreground">
+                                Searching…
+                            </p>
+                        ) : searched ? (
+                            <EmptyState
+                                icon={SearchX}
+                                title="No matching logs"
+                                description="Try widening the time range or removing filters."
+                            />
+                        ) : (
+                            <p className="p-8 text-center text-sm text-muted-foreground">
+                                Adjust filters and search.
+                            </p>
+                        )
                     ) : (
                         entries.map((entry) => (
                             <LogRow

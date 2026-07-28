@@ -6,6 +6,7 @@ import DeleteTeamModal from '@/components/delete-team-modal';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import InviteMemberModal from '@/components/invite-member-modal';
+import PageHeader from '@/components/page-header';
 import RemoveMemberModal from '@/components/remove-member-modal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -92,9 +93,8 @@ export default function TeamEdit({
         <>
             <Head title={pageTitle} />
 
-            <h1 className="sr-only">{pageTitle}</h1>
-
             <div className="flex flex-col space-y-10">
+                <PageHeader title={pageTitle} />
                 <div className="space-y-6">
                     {permissions.canUpdateTeam ? (
                         <>
@@ -141,15 +141,12 @@ export default function TeamEdit({
                                                 required
                                             />
                                             <p className="text-sm text-muted-foreground">
-                                                How long logs are kept.
-                                                Lowering this permanently
-                                                deletes logs older than the
-                                                new value.
+                                                How long logs are kept. Lowering
+                                                this permanently deletes logs
+                                                older than the new value.
                                             </p>
                                             <InputError
-                                                message={
-                                                    errors.retention_days
-                                                }
+                                                message={errors.retention_days}
                                             />
                                         </div>
 

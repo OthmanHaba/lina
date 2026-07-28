@@ -1,8 +1,10 @@
 import { Form, Head, router, usePage } from '@inertiajs/react';
-import { Bell, Plus, Send, Trash2 } from 'lucide-react';
+import { BellRing, Plus, Send, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import EmptyState from '@/components/empty-state';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
+import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -116,9 +118,7 @@ function AlertForm({
                             ? null
                             : (data.search as string) || null,
                     threshold:
-                        type === 'missing_logs'
-                            ? null
-                            : Number(data.threshold),
+                        type === 'missing_logs' ? null : Number(data.threshold),
                     window_minutes: Number(data.window_minutes),
                 },
                 channels: selectedChannels,
@@ -294,7 +294,11 @@ function AlertForm({
                                             {channel.name}{' '}
                                             <span className="text-muted-foreground">
                                                 (
-                                                {channelTypeLabels[channel.type]}
+                                                {
+                                                    channelTypeLabels[
+                                                        channel.type
+                                                    ]
+                                                }
                                                 )
                                             </span>
                                         </Label>
@@ -411,9 +415,7 @@ function AlertRow({
                                     measured {event.measuredValue}
                                 </span>
                                 <span className="text-muted-foreground">
-                                    {new Date(
-                                        event.createdAt,
-                                    ).toLocaleString()}
+                                    {new Date(event.createdAt).toLocaleString()}
                                 </span>
                             </div>
                         ))
@@ -448,9 +450,7 @@ function ChannelForm({
                 enabled: data.enabled === 'on' || data.enabled === true,
                 config: {
                     address:
-                        type === 'email'
-                            ? (data.address as string)
-                            : undefined,
+                        type === 'email' ? (data.address as string) : undefined,
                     url: type === 'webhook' ? (data.url as string) : undefined,
                     chat_id:
                         type === 'telegram'
@@ -470,10 +470,7 @@ function ChannelForm({
                                 setType(value as ChannelType)
                             }
                         >
-                            <SelectTrigger
-                                id="channel-type"
-                                className="w-full"
-                            >
+                            <SelectTrigger id="channel-type" className="w-full">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -590,13 +587,10 @@ export default function AlertsIndex({
             <Head title="Alerts" />
 
             <div className="flex flex-col space-y-8">
-                <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                        <Heading
-                            variant="small"
-                            title="Alerts"
-                            description="Get notified when logs cross a threshold or stop arriving."
-                        />
+                <PageHeader
+                    title="Alerts"
+                    description="Get notified when your logs go quiet or noisy."
+                    action={
                         <Dialog
                             open={addAlertOpen}
                             onOpenChange={setAddAlertOpen}
@@ -623,17 +617,21 @@ export default function AlertsIndex({
                                 />
                             </DialogContent>
                         </Dialog>
-                    </div>
+                    }
+                />
 
+                <div className="space-y-3">
                     {alerts.length === 0 ? (
-                        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
-                            <Bell className="size-8 text-muted-foreground" />
-                            <p className="font-medium">No alerts yet</p>
-                            <p className="text-sm text-muted-foreground">
-                                Add an alert to watch your logs and get
-                                notified.
-                            </p>
-                        </div>
+                        <EmptyState
+                            icon={BellRing}
+                            title="No alerts yet"
+                            description="Create an alert to watch your logs for you."
+                            action={
+                                <Button onClick={() => setAddAlertOpen(true)}>
+                                    <Plus className="size-4" /> Add alert
+                                </Button>
+                            }
+                        />
                     ) : (
                         <div className="divide-y rounded-xl border">
                             {alerts.map((alert) => (
@@ -649,7 +647,9 @@ export default function AlertsIndex({
 
                     <Dialog
                         open={editingAlert !== null}
-                        onOpenChange={(value) => !value && setEditingAlert(null)}
+                        onOpenChange={(value) =>
+                            !value && setEditingAlert(null)
+                        }
                     >
                         <DialogContent className="max-h-[85vh] overflow-y-auto">
                             <DialogHeader>
@@ -708,13 +708,19 @@ export default function AlertsIndex({
                     </div>
 
                     {channels.length === 0 ? (
-                        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
-                            <Send className="size-8 text-muted-foreground" />
-                            <p className="font-medium">No channels yet</p>
-                            <p className="text-sm text-muted-foreground">
-                                Add a channel so firing alerts can reach you.
-                            </p>
-                        </div>
+                        <EmptyState
+                            icon={Send}
+                            title="No notification channels"
+                            description="Add a webhook, email, or Telegram channel first."
+                            action={
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setAddChannelOpen(true)}
+                                >
+                                    <Plus className="size-4" /> Add channel
+                                </Button>
+                            }
+                        />
                     ) : (
                         <div className="divide-y rounded-xl border">
                             {channels.map((channel) => (

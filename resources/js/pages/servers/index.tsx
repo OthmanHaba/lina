@@ -1,8 +1,9 @@
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { Plus, Server as ServerIcon } from 'lucide-react';
 import { useState } from 'react';
-import Heading from '@/components/heading';
+import EmptyState from '@/components/empty-state';
 import InputError from '@/components/input-error';
+import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -60,72 +61,76 @@ export default function ServersIndex({ servers }: Props) {
             <Head title="Servers" />
 
             <div className="flex flex-col space-y-6">
-                <div className="flex items-center justify-between">
-                    <Heading
-                        variant="small"
-                        title="Servers"
-                        description="Connected machines shipping logs to this team"
-                    />
-                    <Dialog open={open} onOpenChange={setOpen}>
-                        <DialogTrigger asChild>
-                            <Button>
-                                <Plus className="size-4" /> Add server
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <Form
-                                key={String(open)}
-                                {...store.form({ current_team: teamSlug })}
-                                resetOnSuccess
-                                className="space-y-4"
-                            >
-                                {({ processing, errors }) => (
-                                    <>
-                                        <DialogHeader>
-                                            <DialogTitle>
-                                                Add server
-                                            </DialogTitle>
-                                            <DialogDescription>
-                                                Name the server, then run the
-                                                install command shown on the
-                                                next screen.
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="name">Name</Label>
-                                            <Input
-                                                id="name"
-                                                name="name"
-                                                placeholder="web-1"
-                                                autoFocus
-                                            />
-                                            <InputError
-                                                message={errors.name}
-                                            />
-                                        </div>
-                                        <DialogFooter>
-                                            <Button
-                                                type="submit"
-                                                disabled={processing}
-                                            >
-                                                Create server
-                                            </Button>
-                                        </DialogFooter>
-                                    </>
-                                )}
-                            </Form>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                <PageHeader
+                    title="Servers"
+                    description="Connect Linux servers and manage their log sources."
+                    action={
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogTrigger asChild>
+                                <Button>
+                                    <Plus className="size-4" /> Add server
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <Form
+                                    key={String(open)}
+                                    {...store.form({ current_team: teamSlug })}
+                                    resetOnSuccess
+                                    className="space-y-4"
+                                >
+                                    {({ processing, errors }) => (
+                                        <>
+                                            <DialogHeader>
+                                                <DialogTitle>
+                                                    Add server
+                                                </DialogTitle>
+                                                <DialogDescription>
+                                                    Name the server, then run
+                                                    the install command shown on
+                                                    the next screen.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="name">
+                                                    Name
+                                                </Label>
+                                                <Input
+                                                    id="name"
+                                                    name="name"
+                                                    placeholder="web-1"
+                                                    autoFocus
+                                                />
+                                                <InputError
+                                                    message={errors.name}
+                                                />
+                                            </div>
+                                            <DialogFooter>
+                                                <Button
+                                                    type="submit"
+                                                    disabled={processing}
+                                                >
+                                                    Create server
+                                                </Button>
+                                            </DialogFooter>
+                                        </>
+                                    )}
+                                </Form>
+                            </DialogContent>
+                        </Dialog>
+                    }
+                />
 
                 {servers.length === 0 ? (
-                    <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
-                        <ServerIcon className="size-8 text-muted-foreground" />
-                        <p className="font-medium">No servers yet</p>
-                        <p className="text-sm text-muted-foreground">
-                            Add a server to get a one-line install command.
-                        </p>
-                    </div>
+                    <EmptyState
+                        icon={ServerIcon}
+                        title="No servers yet"
+                        description="Connect your first server to start shipping logs."
+                        action={
+                            <Button onClick={() => setOpen(true)}>
+                                <Plus className="size-4" /> Add server
+                            </Button>
+                        }
+                    />
                 ) : (
                     <div className="divide-y rounded-xl border">
                         {servers.map((server) => (
@@ -138,9 +143,7 @@ export default function ServersIndex({ servers }: Props) {
                                 className="flex items-center justify-between p-4 hover:bg-muted/50"
                             >
                                 <div>
-                                    <p className="font-medium">
-                                        {server.name}
-                                    </p>
+                                    <p className="font-medium">{server.name}</p>
                                     <p className="text-sm text-muted-foreground">
                                         {server.hostname ?? 'Not connected yet'}
                                     </p>
@@ -164,7 +167,9 @@ export default function ServersIndex({ servers }: Props) {
     );
 }
 
-ServersIndex.layout = (props: Props & { currentTeam?: { slug: string } | null }) => ({
+ServersIndex.layout = (
+    props: Props & { currentTeam?: { slug: string } | null },
+) => ({
     breadcrumbs: [
         {
             title: 'Servers',
