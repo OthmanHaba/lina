@@ -8,6 +8,7 @@ export type Team = {
     role?: TeamRole;
     roleLabel?: string;
     isCurrent?: boolean;
+    retentionDays?: number;
 };
 
 export type TeamMember = {

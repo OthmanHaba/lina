@@ -23,7 +23,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { destroy, index, show, token } from '@/routes/servers';
+import { destroy, index, show, token, update } from '@/routes/servers';
 import {
     destroy as destroySource,
     store as storeSource,
@@ -56,6 +56,7 @@ type Props = {
     sources: LogSourceItem[];
     plainToken: string | null;
     installBaseUrl: string;
+    teamRetentionDays: number;
 };
 
 const configStatusMeta = {
@@ -244,12 +245,93 @@ function SourceForm({
     );
 }
 
+function RetentionCard({
+    server,
+    teamRetentionDays,
+    teamSlug,
+}: {
+    server: ServerDetail;
+    teamRetentionDays: number;
+    teamSlug: string;
+}) {
+    const [mode, setMode] = useState<'default' | 'custom'>(
+        server.retentionDays === null ? 'default' : 'custom',
+    );
+    const [days, setDays] = useState(
+        server.retentionDays ?? teamRetentionDays,
+    );
+    const [saving, setSaving] = useState(false);
+
+    const save = () => {
+        setSaving(true);
+        router.patch(
+            update({ current_team: teamSlug, server: server.id }).url,
+            { retention_days: mode === 'default' ? null : days },
+            { preserveScroll: true, onFinish: () => setSaving(false) },
+        );
+    };
+
+    return (
+        <div className="space-y-3">
+            <Heading variant="small" title="Retention" />
+
+            <div className="space-y-4 rounded-xl border p-4">
+                <div className="grid gap-2 sm:max-w-xs">
+                    <Label htmlFor="retention-mode">Log retention</Label>
+                    <Select
+                        value={mode}
+                        onValueChange={(value) =>
+                            setMode(value as 'default' | 'custom')
+                        }
+                    >
+                        <SelectTrigger id="retention-mode" className="w-full">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="default">
+                                Team default ({teamRetentionDays} days)
+                            </SelectItem>
+                            <SelectItem value="custom">Custom</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {mode === 'custom' && (
+                    <div className="grid gap-2 sm:max-w-xs">
+                        <Label htmlFor="retention-days">Days</Label>
+                        <Input
+                            id="retention-days"
+                            type="number"
+                            min={1}
+                            max={365}
+                            value={days}
+                            onChange={(event) =>
+                                setDays(Number(event.target.value))
+                            }
+                        />
+                    </div>
+                )}
+
+                <p className="text-sm text-muted-foreground">
+                    How long logs are kept. Lowering this permanently deletes
+                    logs older than the new value.
+                </p>
+
+                <Button onClick={save} disabled={saving}>
+                    Save
+                </Button>
+            </div>
+        </div>
+    );
+}
+
 export default function ServerShow({
     server,
     health,
     sources,
     plainToken,
     installBaseUrl,
+    teamRetentionDays,
 }: Props) {
     const { currentTeam } = usePage().props;
     const teamSlug = currentTeam?.slug ?? '';
@@ -407,6 +489,12 @@ export default function ServerShow({
                         )}
                     </div>
                 </div>
+
+                <RetentionCard
+                    server={server}
+                    teamRetentionDays={teamRetentionDays}
+                    teamSlug={teamSlug}
+                />
 
                 <div className="space-y-3">
                     <div className="flex items-center justify-between">

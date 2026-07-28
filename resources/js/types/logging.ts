@@ -11,6 +11,7 @@ export type ServerSummary = {
 
 export type ServerDetail = ServerSummary & {
     agentVersion: string | null;
+    retentionDays: number | null;
 };
 
 export type LogSourceType = 'systemd' | 'docker' | 'nginx' | 'file';

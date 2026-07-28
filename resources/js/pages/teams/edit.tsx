@@ -124,6 +124,35 @@ export default function TeamEdit({
                                             <InputError message={errors.name} />
                                         </div>
 
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="retention_days">
+                                                Log retention (days)
+                                            </Label>
+                                            <Input
+                                                id="retention_days"
+                                                name="retention_days"
+                                                type="number"
+                                                min={1}
+                                                max={365}
+                                                data-test="team-retention-input"
+                                                defaultValue={
+                                                    team.retentionDays
+                                                }
+                                                required
+                                            />
+                                            <p className="text-sm text-muted-foreground">
+                                                How long logs are kept.
+                                                Lowering this permanently
+                                                deletes logs older than the
+                                                new value.
+                                            </p>
+                                            <InputError
+                                                message={
+                                                    errors.retention_days
+                                                }
+                                            />
+                                        </div>
+
                                         <div className="flex items-center gap-4">
                                             <Button
                                                 type="submit"
