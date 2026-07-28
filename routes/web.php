@@ -24,6 +24,7 @@ Route::prefix('{current_team}')
         Route::patch('dashboard/widgets/reorder', [DashboardWidgetController::class, 'reorder'])->name('dashboard.widgets.reorder');
         Route::patch('dashboard/widgets/{widget}', [DashboardWidgetController::class, 'update'])->name('dashboard.widgets.update');
         Route::delete('dashboard/widgets/{widget}', [DashboardWidgetController::class, 'destroy'])->name('dashboard.widgets.destroy');
+        Route::get('dashboard/widgets/{widget}/data', [DashboardWidgetController::class, 'data'])->name('dashboard.widgets.data');
         Route::get('servers', [ServerController::class, 'index'])->name('servers.index');
         Route::post('servers', [ServerController::class, 'store'])->name('servers.store');
         Route::get('servers/{server}', [ServerController::class, 'show'])->name('servers.show');

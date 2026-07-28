@@ -6,6 +6,8 @@ use App\Enums\WidgetSize;
 use App\Enums\WidgetType;
 use App\Http\Controllers\Controller;
 use App\Models\DashboardWidget;
+use App\Services\WidgetDataService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -89,6 +91,17 @@ class DashboardWidgetController extends Controller
         });
 
         return back();
+    }
+
+    public function data(Request $request, string $current_team, DashboardWidget $widget, WidgetDataService $service): JsonResponse
+    {
+        abort_unless($widget->team_id === $request->user()->current_team_id, 404);
+
+        $validated = $request->validate([
+            'range' => ['sometimes', Rule::in(array_keys(WidgetDataService::RANGES))],
+        ]);
+
+        return response()->json($service->fetch($widget, $validated['range'] ?? '1h'));
     }
 
     /**
