@@ -1,9 +1,5 @@
-import {
-    closestCenter,
-    DndContext
-    
-} from '@dnd-kit/core';
-import type {DragEndEvent} from '@dnd-kit/core';
+import { closestCenter, DndContext } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
 import {
     arrayMove,
     rectSortingStrategy,
@@ -265,11 +261,16 @@ export default function Dashboard({
                         >
                             <div className="grid grid-cols-1 gap-4 lg:grid-cols-6">
                                 {orderedWidgets.map((widget) => (
-                                    <SortableWidget key={widget.id} widget={widget}>
+                                    <SortableWidget
+                                        key={widget.id}
+                                        widget={widget}
+                                    >
                                         {(dragHandleProps) => (
                                             <WidgetFrame
                                                 widget={widget}
-                                                dragHandleProps={dragHandleProps}
+                                                dragHandleProps={
+                                                    dragHandleProps
+                                                }
                                                 onEdit={() => {
                                                     setEditingWidget(widget);
                                                     setDialogOpen(true);

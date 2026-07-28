@@ -174,8 +174,7 @@ function WidgetForm({
 
                 if (type === 'timeseries') {
                     baseConfig.chart = chart;
-                    baseConfig.group_by =
-                        groupBy === 'none' ? null : groupBy;
+                    baseConfig.group_by = groupBy === 'none' ? null : groupBy;
                     baseConfig.logql = hasLogql ? logql : null;
                 } else if (type === 'stat') {
                     baseConfig.window_minutes = Number(windowMinutes);
@@ -342,9 +341,7 @@ function WidgetForm({
                                         <SelectItem value="line">
                                             Line
                                         </SelectItem>
-                                        <SelectItem value="bar">
-                                            Bar
-                                        </SelectItem>
+                                        <SelectItem value="bar">Bar</SelectItem>
                                         <SelectItem value="area">
                                             Area
                                         </SelectItem>
@@ -462,7 +459,7 @@ function WidgetForm({
                                         setLogql(event.target.value)
                                     }
                                     className={cn(
-                                        'border-input placeholder:text-muted-foreground flex w-full min-w-0 rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+                                        'flex w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
                                         'font-mono',
                                     )}
                                     placeholder='{source="nginx"} |= "500"'
@@ -472,9 +469,7 @@ function WidgetForm({
                                     above. It runs inside your team's tenant
                                     only.
                                 </p>
-                                <InputError
-                                    message={errors['config.logql']}
-                                />
+                                <InputError message={errors['config.logql']} />
                             </CollapsibleContent>
                         </Collapsible>
                     )}
@@ -528,9 +523,7 @@ export default function WidgetDialog({
                                 <button
                                     key={option.value}
                                     type="button"
-                                    onClick={() =>
-                                        setPickedType(option.value)
-                                    }
+                                    onClick={() => setPickedType(option.value)}
                                     className="flex flex-col items-start gap-2 rounded-lg border p-4 text-left transition-colors hover:border-primary hover:bg-accent"
                                 >
                                     <Icon className="size-5 text-muted-foreground" />

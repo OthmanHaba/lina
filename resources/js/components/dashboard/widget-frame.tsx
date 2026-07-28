@@ -69,25 +69,21 @@ export default function WidgetFrame({
                                         Size
                                     </DropdownMenuSubTrigger>
                                     <DropdownMenuSubContent>
-                                        {(['third', 'half', 'full'] as const).map(
-                                            (size) => (
-                                                <DropdownMenuItem
-                                                    key={size}
-                                                    onSelect={() =>
-                                                        onResize(size)
-                                                    }
-                                                    disabled={
-                                                        size === widget.size
-                                                    }
-                                                >
-                                                    {size === 'third'
-                                                        ? 'Small (1/3)'
-                                                        : size === 'half'
-                                                          ? 'Medium (1/2)'
-                                                          : 'Full width'}
-                                                </DropdownMenuItem>
-                                            ),
-                                        )}
+                                        {(
+                                            ['third', 'half', 'full'] as const
+                                        ).map((size) => (
+                                            <DropdownMenuItem
+                                                key={size}
+                                                onSelect={() => onResize(size)}
+                                                disabled={size === widget.size}
+                                            >
+                                                {size === 'third'
+                                                    ? 'Small (1/3)'
+                                                    : size === 'half'
+                                                      ? 'Medium (1/2)'
+                                                      : 'Full width'}
+                                            </DropdownMenuItem>
+                                        ))}
                                     </DropdownMenuSubContent>
                                 </DropdownMenuSub>
                             )}
@@ -106,7 +102,9 @@ export default function WidgetFrame({
                     </DropdownMenu>
                 )}
             </CardHeader>
-            <CardContent className="min-h-0 flex-1 px-4">{children}</CardContent>
+            <CardContent className="min-h-0 flex-1 px-4">
+                {children}
+            </CardContent>
         </Card>
     );
 }
