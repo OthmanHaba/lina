@@ -71,3 +71,14 @@ test('the artisan command writes the file', function () {
 
     expect(file_exists(config('services.loki.overrides_path')))->toBeTrue();
 });
+
+test('the command fails loudly when the file cannot be written', function () {
+    $blocker = storage_path('framework/testing/blocker-'.uniqid());
+    file_put_contents($blocker, 'not a directory');
+    config(['services.loki.overrides_path' => $blocker.'/overrides.yaml']);
+    Team::factory()->create();
+
+    $this->artisan('loki:write-overrides')->assertFailed();
+
+    @unlink($blocker);
+});

@@ -15,7 +15,15 @@ class WriteLokiOverrides extends Command
     {
         $writer->write();
 
-        $this->info('Overrides written to '.config('services.loki.overrides_path'));
+        $path = config('services.loki.overrides_path');
+
+        if (! is_string($path) || $path === '' || ! is_file($path)) {
+            $this->error('Overrides file was not written — check LOKI_OVERRIDES_PATH and directory permissions (details in the log).');
+
+            return self::FAILURE;
+        }
+
+        $this->info('Overrides written to '.$path);
 
         return self::SUCCESS;
     }
