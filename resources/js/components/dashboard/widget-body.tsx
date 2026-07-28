@@ -1,7 +1,20 @@
+import AlertStatusWidget from '@/components/dashboard/widgets/alert-status-widget';
+import LogStreamWidget from '@/components/dashboard/widgets/log-stream-widget';
+import ServerHealthWidget from '@/components/dashboard/widgets/server-health-widget';
+import StatWidget from '@/components/dashboard/widgets/stat-widget';
+import TimeseriesWidget from '@/components/dashboard/widgets/timeseries-widget';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useWidgetData } from '@/hooks/use-widget-data';
-import type { TimeRange, Widget } from '@/types/dashboard';
+import type {
+    AlertStatusData,
+    LogStreamData,
+    ServerHealthData,
+    StatData,
+    TimeRange,
+    TimeseriesData,
+    Widget,
+} from '@/types/dashboard';
 
 type Props = {
     teamSlug: string;
@@ -38,5 +51,24 @@ export default function WidgetBody({
         );
     }
 
-    return <pre className="text-xs">{JSON.stringify(data)}</pre>;
+    switch (widget.type) {
+        case 'timeseries':
+            return (
+                <TimeseriesWidget
+                    widget={widget}
+                    data={data as TimeseriesData}
+                    range={range}
+                />
+            );
+        case 'stat':
+            return <StatWidget widget={widget} data={data as StatData} />;
+        case 'log_stream':
+            return <LogStreamWidget data={data as LogStreamData} />;
+        case 'alert_status':
+            return <AlertStatusWidget data={data as AlertStatusData} />;
+        case 'server_health':
+            return <ServerHealthWidget data={data as ServerHealthData} />;
+        default:
+            return null;
+    }
 }
