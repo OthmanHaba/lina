@@ -13,6 +13,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { detectLevel } from '@/lib/log-level';
 import { index, query as logsQuery } from '@/routes/logs';
 import type { LogEntry } from '@/types';
 
@@ -43,35 +44,53 @@ function prettyLine(line: string): string | null {
 function LogRow({ entry }: { entry: LogEntry }) {
     const [expanded, setExpanded] = useState(false);
     const pretty = expanded ? prettyLine(entry.line) : null;
+    const level = detectLevel(entry.line);
 
     return (
         <div
-            className="cursor-pointer border-b border-border/50 px-3 py-1 font-mono text-xs hover:bg-muted/50"
+            className="flex cursor-pointer items-baseline gap-2 border-b border-border/40 px-2 py-1 font-mono text-xs hover:bg-muted/50"
             onClick={() => setExpanded(!expanded)}
         >
-            <div className="flex gap-3">
-                <span className="shrink-0 text-muted-foreground">
-                    {new Date(entry.time).toLocaleTimeString()}
-                </span>
-                <span className="shrink-0 text-muted-foreground">
-                    {entry.labels.source}
-                </span>
-                <span className="truncate whitespace-pre">{entry.line}</span>
-            </div>
-            {expanded && (
-                <div className="mt-1 space-y-1 pl-4">
-                    <div className="flex flex-wrap gap-1">
-                        {Object.entries(entry.labels).map(([key, value]) => (
-                            <Badge key={key} variant="secondary">
-                                {key}={value}
-                            </Badge>
-                        ))}
-                    </div>
-                    <pre className="overflow-x-auto rounded bg-muted p-2 whitespace-pre-wrap">
-                        {pretty ?? entry.line}
-                    </pre>
-                </div>
+            <span className="w-20 shrink-0 text-muted-foreground">
+                {new Date(entry.time).toLocaleTimeString()}
+            </span>
+            {level === 'error' && (
+                <Badge variant="destructive" className="shrink-0">
+                    error
+                </Badge>
             )}
+            {level === 'warn' && (
+                <Badge
+                    variant="secondary"
+                    className="shrink-0 bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                >
+                    warn
+                </Badge>
+            )}
+            <span className="shrink-0 text-muted-foreground">
+                {entry.labels.source}
+            </span>
+            <div className="min-w-0 flex-1">
+                <span className="break-all whitespace-pre-wrap">
+                    {entry.line}
+                </span>
+                {expanded && (
+                    <div className="mt-1 space-y-1 pl-4">
+                        <div className="flex flex-wrap gap-1">
+                            {Object.entries(entry.labels).map(
+                                ([key, value]) => (
+                                    <Badge key={key} variant="secondary">
+                                        {key}={value}
+                                    </Badge>
+                                ),
+                            )}
+                        </div>
+                        <pre className="overflow-x-auto rounded bg-muted p-2 whitespace-pre-wrap">
+                            {pretty ?? entry.line}
+                        </pre>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
@@ -211,7 +230,7 @@ export default function LogsIndex({ servers, sources }: Props) {
                     description="Search and live-tail across all your servers."
                 />
 
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="sticky top-0 z-10 -mx-4 flex flex-wrap items-center gap-2 border-b bg-background/95 px-4 py-3 backdrop-blur">
                     <Select value={serverId} onValueChange={setServerId}>
                         <SelectTrigger className="w-44">
                             <SelectValue placeholder="All servers" />
@@ -270,26 +289,31 @@ export default function LogsIndex({ servers, sources }: Props) {
                         <Search className="size-4" /> Search
                     </Button>
 
-                    <Button
-                        variant={live ? 'default' : 'outline'}
-                        onClick={() => {
-                            if (!live && entries.length === 0) {
-                                runSearch();
-                            }
-
-                            setLive(!live);
-                        }}
-                    >
-                        {live ? (
-                            <>
-                                <Pause className="size-4" /> Pause
-                            </>
-                        ) : (
-                            <>
-                                <Play className="size-4" /> Live
-                            </>
+                    <div className="flex items-center gap-2">
+                        {live && (
+                            <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
                         )}
-                    </Button>
+                        <Button
+                            variant={live ? 'default' : 'outline'}
+                            onClick={() => {
+                                if (!live && entries.length === 0) {
+                                    runSearch();
+                                }
+
+                                setLive(!live);
+                            }}
+                        >
+                            {live ? (
+                                <>
+                                    <Pause className="size-4" /> Pause
+                                </>
+                            ) : (
+                                <>
+                                    <Play className="size-4" /> Live
+                                </>
+                            )}
+                        </Button>
+                    </div>
                 </div>
 
                 {error && (
