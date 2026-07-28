@@ -3,6 +3,7 @@
 namespace App\Actions\Teams;
 
 use App\Enums\TeamRole;
+use App\Models\DashboardWidget;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\LokiOverridesWriter;
@@ -29,6 +30,8 @@ class CreateTeam
             ]);
 
             $user->switchTeam($team);
+
+            DashboardWidget::seedDefaults($team);
 
             return $team;
         });

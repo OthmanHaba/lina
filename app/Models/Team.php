@@ -108,6 +108,16 @@ class Team extends Model
     }
 
     /**
+     * Get all dashboard widgets for this team.
+     *
+     * @return HasMany<DashboardWidget, $this>
+     */
+    public function widgets(): HasMany
+    {
+        return $this->hasMany(DashboardWidget::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
