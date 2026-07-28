@@ -20,11 +20,15 @@ use Illuminate\Support\Str;
  * @property string|null $hostname
  * @property string|null $agent_version
  * @property Carbon|null $last_seen_at
+ * @property Carbon|null $last_poll_at
+ * @property Carbon|null $last_push_at
+ * @property Carbon|null $config_synced_at
+ * @property string|null $synced_config_hash
  * @property-read Team $team
  * @property-read Collection<int, LogSource> $logSources
  * @property-read Collection<int, UsageRecord> $usageRecords
  */
-#[Fillable(['team_id', 'name', 'token_hash', 'hostname', 'agent_version', 'last_seen_at'])]
+#[Fillable(['team_id', 'name', 'token_hash', 'hostname', 'agent_version', 'last_seen_at', 'last_poll_at', 'last_push_at', 'config_synced_at', 'synced_config_hash'])]
 class Server extends Model
 {
     /** @use HasFactory<ServerFactory> */
@@ -97,6 +101,9 @@ class Server extends Model
     {
         return [
             'last_seen_at' => 'datetime',
+            'last_poll_at' => 'datetime',
+            'last_push_at' => 'datetime',
+            'config_synced_at' => 'datetime',
         ];
     }
 }

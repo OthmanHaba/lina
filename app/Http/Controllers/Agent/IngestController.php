@@ -25,6 +25,10 @@ class IngestController extends Controller
 
         $this->recordUsage($server, strlen($body));
 
+        if ($server->last_push_at === null || $server->last_push_at->lt(now()->subSeconds(30))) {
+            $server->forceFill(['last_push_at' => now()])->save();
+        }
+
         try {
             $response = Http::withHeaders([
                 'X-Scope-OrgID' => 'team-'.$server->team_id,
