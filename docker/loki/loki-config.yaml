@@ -1,7 +1,7 @@
 auth_enabled: true
 
 runtime_config:
-  file: /etc/loki/overrides.yaml
+  file: /etc/loki/runtime/overrides.yaml
 
 server:
   http_listen_port: 3100

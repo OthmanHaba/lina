@@ -6,7 +6,7 @@ services:
       - '127.0.0.1:3100:3100'
     volumes:
       - ./docker/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
-      - ./storage/app/loki/overrides.yaml:/etc/loki/overrides.yaml:ro
+      - ./storage/app/loki:/etc/loki/runtime:ro
       - loki-data:/loki
     restart: unless-stopped
 
