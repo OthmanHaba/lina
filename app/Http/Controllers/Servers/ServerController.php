@@ -70,6 +70,13 @@ class ServerController extends Controller
                 'lastSeenAt' => $server->last_seen_at?->toISOString(),
                 'bytesToday' => $server->bytesToday(),
             ],
+            'health' => [
+                'lastPollAt' => $server->last_poll_at?->toISOString(),
+                'lastPushAt' => $server->last_push_at?->toISOString(),
+                'configStatus' => $server->configStatus(),
+                'configSyncedAt' => $server->config_synced_at?->toISOString(),
+                'usage' => $server->usageSeries(),
+            ],
             'sources' => $server->logSources()->get()->map(fn (LogSource $source) => [
                 'id' => $source->id,
                 'type' => $source->type->value,

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\AlloyConfigRenderer;
 use Database\Factories\ServerFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
@@ -76,6 +77,41 @@ class Server extends Model
     public function bytesToday(): int
     {
         return (int) $this->usageRecords()->whereDate('date', today())->sum('bytes');
+    }
+
+    /**
+     * Config drift status derived from the last 304-confirmed hash.
+     * Renders the current config — call from page views, not hot paths.
+     */
+    public function configStatus(): string
+    {
+        $current = sha1(app(AlloyConfigRenderer::class)->render($this));
+
+        return match (true) {
+            $this->synced_config_hash === $current => 'synced',
+            (bool) $this->last_poll_at?->gt(now()->subMinutes(5)) => 'syncing',
+            default => 'unknown',
+        };
+    }
+
+    /**
+     * Daily ingest bytes for the trailing window, zero-filled, oldest first.
+     *
+     * @return array<int, array{date: string, bytes: int}>
+     */
+    public function usageSeries(int $days = 14): array
+    {
+        $bytesByDate = $this->usageRecords()
+            ->whereDate('date', '>=', today()->subDays($days - 1))
+            ->get()
+            ->mapWithKeys(fn (UsageRecord $record) => [$record->date->toDateString() => $record->bytes]);
+
+        return collect(range($days - 1, 0))
+            ->map(fn (int $daysAgo) => [
+                'date' => today()->subDays($daysAgo)->toDateString(),
+                'bytes' => (int) ($bytesByDate[today()->subDays($daysAgo)->toDateString()] ?? 0),
+            ])
+            ->all();
     }
 
     /** @return BelongsTo<Team, $this> */
