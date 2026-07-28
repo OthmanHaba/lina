@@ -139,3 +139,14 @@ test('the server page includes retention props', function () {
             ->where('teamRetentionDays', 30),
         );
 });
+
+test('creating a team rewrites the overrides file with its entry', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->post(route('teams.store'), ['name' => 'Fresh Team'])
+        ->assertRedirect();
+
+    $team = Team::where('name', 'Fresh Team')->firstOrFail();
+    expect(file_get_contents(config('services.loki.overrides_path')))->toContain("team-{$team->id}:");
+});

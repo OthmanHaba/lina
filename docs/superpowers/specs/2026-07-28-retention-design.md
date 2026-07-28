@@ -49,8 +49,8 @@ Failure mode: if the write fails (permissions/disk), log an error; the request s
 
 ## Infra
 
-- `docker/loki/loki-config.yaml`: add `runtime_config: {file: /etc/loki/overrides.yaml}`.
-- `docker-compose.yml`: mount `./storage/app/loki/overrides.yaml:/etc/loki/overrides.yaml:ro`.
+- `docker/loki/loki-config.yaml`: add `runtime_config: {file: /etc/loki/runtime/overrides.yaml}`.
+- `docker-compose.yml`: mount the directory `./storage/app/loki:/etc/loki/runtime:ro` (a single-file bind mount would pin the pre-rename inode and never see atomic updates).
 - Loki polls runtime config periodically (default 10s); the compactor applies per-tenant/per-stream retention on its next cycle. Note: compactor deletion is not instant — retention changes take effect within Loki's compaction interval, not seconds.
 
 ## Endpoints & UI
