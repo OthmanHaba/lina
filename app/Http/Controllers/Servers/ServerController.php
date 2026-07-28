@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Servers\StoreServerRequest;
 use App\Models\LogSource;
 use App\Models\Server;
+use App\Services\LokiOverridesWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -69,6 +70,7 @@ class ServerController extends Controller
                 'status' => $server->status(),
                 'lastSeenAt' => $server->last_seen_at?->toISOString(),
                 'bytesToday' => $server->bytesToday(),
+                'retentionDays' => $server->retention_days,
             ],
             'health' => [
                 'lastPollAt' => $server->last_poll_at?->toISOString(),
@@ -86,6 +88,7 @@ class ServerController extends Controller
             ]),
             'plainToken' => session('plainToken'),
             'installBaseUrl' => url('/install'),
+            'teamRetentionDays' => $server->team->retention_days,
         ]);
     }
 
@@ -104,13 +107,35 @@ class ServerController extends Controller
     }
 
     /**
+     * Update server settings (currently just the retention override).
+     */
+    public function update(Request $request, string $current_team, Server $server, LokiOverridesWriter $overrides): RedirectResponse
+    {
+        $this->authorizeServer($request, $server);
+
+        $validated = $request->validate([
+            'retention_days' => ['present', 'nullable', 'integer', 'min:1', 'max:365'],
+        ]);
+
+        $server->update(['retention_days' => $validated['retention_days']]);
+
+        $overrides->write();
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Retention updated.')]);
+
+        return back();
+    }
+
+    /**
      * Delete the server.
      */
-    public function destroy(Request $request, string $current_team, Server $server): RedirectResponse
+    public function destroy(Request $request, string $current_team, Server $server, LokiOverridesWriter $overrides): RedirectResponse
     {
         $this->authorizeServer($request, $server);
 
         $server->delete();
+
+        $overrides->write();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Server deleted.')]);
 

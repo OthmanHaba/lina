@@ -22,6 +22,7 @@ Route::prefix('{current_team}')
         Route::get('servers', [ServerController::class, 'index'])->name('servers.index');
         Route::post('servers', [ServerController::class, 'store'])->name('servers.store');
         Route::get('servers/{server}', [ServerController::class, 'show'])->name('servers.show');
+        Route::patch('servers/{server}', [ServerController::class, 'update'])->name('servers.update');
         Route::post('servers/{server}/token', [ServerController::class, 'regenerateToken'])->name('servers.token');
         Route::delete('servers/{server}', [ServerController::class, 'destroy'])->name('servers.destroy');
         Route::post('servers/{server}/sources', [LogSourceController::class, 'store'])->name('servers.sources.store');

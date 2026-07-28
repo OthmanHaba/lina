@@ -10,6 +10,7 @@ use App\Http\Requests\Teams\SaveTeamRequest;
 use App\Models\Membership;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\LokiOverridesWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -56,6 +57,7 @@ class TeamController extends Controller
                 'name' => $team->name,
                 'slug' => $team->slug,
                 'isPersonal' => $team->is_personal,
+                'retentionDays' => $team->retention_days,
             ],
             'members' => $team->members()->get()->map(function (User $member) {
                 /** @var Membership $membership */
@@ -88,17 +90,19 @@ class TeamController extends Controller
     /**
      * Update the specified team.
      */
-    public function update(SaveTeamRequest $request, Team $team): RedirectResponse
+    public function update(SaveTeamRequest $request, Team $team, LokiOverridesWriter $overrides): RedirectResponse
     {
         Gate::authorize('update', $team);
 
         $team = DB::transaction(function () use ($request, $team) {
             $team = Team::whereKey($team->id)->lockForUpdate()->firstOrFail();
 
-            $team->update(['name' => $request->validated('name')]);
+            $team->update($request->safe()->only(['name', 'retention_days']));
 
             return $team;
         });
+
+        $overrides->write();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Team updated.')]);
 
@@ -146,7 +150,7 @@ class TeamController extends Controller
     /**
      * Delete the specified team.
      */
-    public function destroy(DeleteTeamRequest $request, Team $team): RedirectResponse
+    public function destroy(DeleteTeamRequest $request, Team $team, LokiOverridesWriter $overrides): RedirectResponse
     {
         $user = $request->user();
         $fallbackTeam = $user->isCurrentTeam($team)
@@ -162,6 +166,8 @@ class TeamController extends Controller
             $team->memberships()->delete();
             $team->delete();
         });
+
+        $overrides->write();
 
         if ($fallbackTeam) {
             $user->switchTeam($fallbackTeam);

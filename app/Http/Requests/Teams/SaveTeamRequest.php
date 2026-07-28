@@ -17,6 +17,7 @@ class SaveTeamRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255', new TeamName],
+            'retention_days' => ['sometimes', 'required', 'integer', 'min:1', 'max:365'],
         ];
     }
 }
