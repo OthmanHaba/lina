@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Alerts\AlertController;
 use App\Http\Controllers\Alerts\NotificationChannelController;
+use App\Http\Controllers\Dashboard\DashboardWidgetController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Logs\LogController;
 use App\Http\Controllers\Servers\InstallScriptController;
@@ -19,6 +20,10 @@ Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
     ->group(function () {
         Route::get('dashboard', DashboardController::class)->name('dashboard');
+        Route::post('dashboard/widgets', [DashboardWidgetController::class, 'store'])->name('dashboard.widgets.store');
+        Route::patch('dashboard/widgets/reorder', [DashboardWidgetController::class, 'reorder'])->name('dashboard.widgets.reorder');
+        Route::patch('dashboard/widgets/{widget}', [DashboardWidgetController::class, 'update'])->name('dashboard.widgets.update');
+        Route::delete('dashboard/widgets/{widget}', [DashboardWidgetController::class, 'destroy'])->name('dashboard.widgets.destroy');
         Route::get('servers', [ServerController::class, 'index'])->name('servers.index');
         Route::post('servers', [ServerController::class, 'store'])->name('servers.store');
         Route::get('servers/{server}', [ServerController::class, 'show'])->name('servers.show');
