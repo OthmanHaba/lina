@@ -35,3 +35,11 @@ export type LogEntry = {
     line: string;
     labels: Record<string, string>;
 };
+
+export type ServerHealth = {
+    lastPollAt: string | null;
+    lastPushAt: string | null;
+    configStatus: 'synced' | 'syncing' | 'unknown';
+    configSyncedAt: string | null;
+    usage: { date: string; bytes: number }[];
+};

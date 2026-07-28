@@ -29,7 +29,12 @@ import {
     store as storeSource,
     update as updateSource,
 } from '@/routes/servers/sources';
-import type { LogSourceItem, LogSourceType, ServerDetail } from '@/types';
+import type {
+    LogSourceItem,
+    LogSourceType,
+    ServerDetail,
+    ServerHealth,
+} from '@/types';
 import { formatBytes } from './index';
 
 const statusVariant = {
@@ -47,10 +52,17 @@ const typeLabels: Record<LogSourceType, string> = {
 
 type Props = {
     server: ServerDetail;
+    health: ServerHealth;
     sources: LogSourceItem[];
     plainToken: string | null;
     installBaseUrl: string;
 };
+
+const configStatusMeta = {
+    synced: { dot: 'bg-emerald-500', label: 'In sync' },
+    syncing: { dot: 'bg-amber-500', label: 'Syncing…' },
+    unknown: { dot: 'bg-gray-400', label: 'Unknown' },
+} as const;
 
 function splitLines(value: unknown): string[] | undefined {
     if (typeof value !== 'string' || value.trim() === '') {
@@ -234,6 +246,7 @@ function SourceForm({
 
 export default function ServerShow({
     server,
+    health,
     sources,
     plainToken,
     installBaseUrl,
@@ -247,6 +260,7 @@ export default function ServerShow({
     const installCommand = plainToken
         ? `curl -sSL ${installBaseUrl}/${plainToken} | sudo bash`
         : null;
+    const maxUsageBytes = Math.max(...health.usage.map((day) => day.bytes));
 
     const copyCommand = async () => {
         if (!installCommand) {
@@ -318,6 +332,79 @@ export default function ServerShow({
                         <p className="font-medium">
                             {formatBytes(server.bytesToday)}
                         </p>
+                    </div>
+                </div>
+
+                <div className="space-y-3">
+                    <Heading variant="small" title="Agent health" />
+
+                    <div className="grid gap-4 text-sm md:grid-cols-3">
+                        <div className="rounded-xl border p-4">
+                            <p className="text-muted-foreground">
+                                Last config poll
+                            </p>
+                            <p className="font-medium">
+                                {health.lastPollAt
+                                    ? new Date(
+                                          health.lastPollAt,
+                                      ).toLocaleString()
+                                    : 'Never'}
+                            </p>
+                        </div>
+                        <div className="rounded-xl border p-4">
+                            <p className="text-muted-foreground">
+                                Last log push
+                            </p>
+                            <p className="font-medium">
+                                {health.lastPushAt
+                                    ? new Date(
+                                          health.lastPushAt,
+                                      ).toLocaleString()
+                                    : 'Never'}
+                            </p>
+                        </div>
+                        <div className="rounded-xl border p-4">
+                            <p className="text-muted-foreground">Config</p>
+                            <p className="flex items-center gap-2 font-medium">
+                                <span
+                                    className={`inline-block size-2 rounded-full ${configStatusMeta[health.configStatus].dot}`}
+                                />
+                                {configStatusMeta[health.configStatus].label}
+                            </p>
+                            {health.configStatus === 'synced' && (
+                                <p className="text-muted-foreground">
+                                    {health.configSyncedAt
+                                        ? new Date(
+                                              health.configSyncedAt,
+                                          ).toLocaleString()
+                                        : null}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl border p-4">
+                        <p className="mb-3 text-sm text-muted-foreground">
+                            Ingest, last 14 days
+                        </p>
+                        {health.usage.every((day) => day.bytes === 0) ? (
+                            <p className="text-sm text-muted-foreground">
+                                No ingest in the last 14 days
+                            </p>
+                        ) : (
+                            <div className="flex h-24 items-end gap-1">
+                                {health.usage.map((day) => (
+                                    <div
+                                        key={day.date}
+                                        className="flex-1 rounded-t bg-primary/70"
+                                        style={{
+                                            height: `${Math.max((day.bytes / maxUsageBytes) * 100, 2)}%`,
+                                        }}
+                                        title={`${day.date}: ${formatBytes(day.bytes)}`}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 
