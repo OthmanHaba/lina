@@ -98,7 +98,7 @@ export default function Welcome() {
                 />
                 <meta
                     property="og:image"
-                    content="/images/lina-server-rack.webp"
+                    content="/images/lina-wordmark-hero.webp"
                 />
             </Head>
 
@@ -158,14 +158,14 @@ export default function Welcome() {
                                 <div className="absolute -inset-8 -z-10 bg-primary/6 blur-3xl" />
                                 <div className="relative overflow-hidden rounded-[0.9rem] border border-white/12 bg-[#111318] shadow-2xl shadow-black/50">
                                     <img
-                                        src="/images/lina-server-rack.webp"
-                                        alt="A private server rack in a dark data center with a chartreuse data path"
-                                        width="1586"
-                                        height="992"
+                                        src="/images/lina-wordmark-hero.webp"
+                                        alt="Lina wordmark with a chartreuse dot on a dark background"
+                                        width="2172"
+                                        height="724"
                                         fetchPriority="high"
-                                        className="aspect-[1.6/1] w-full object-cover"
+                                        className="aspect-[3/1] w-full object-cover"
                                     />
-                                    <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-5 bg-gradient-to-t from-[#090b0e] via-[#090b0e]/85 to-transparent px-5 pt-20 pb-5 sm:px-6">
+                                    <div className="flex items-center justify-between gap-5 border-t border-white/10 bg-[#090b0e] px-5 py-4 sm:px-6">
                                         <div>
                                             <p className="font-mono text-xs text-primary">
                                                 / infrastructure-owned

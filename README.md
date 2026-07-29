@@ -2,7 +2,7 @@
 
 Lina is a self-hosted log operations platform for Linux teams. It collects logs with Grafana Alloy, stores them in Grafana Loki, and gives operators one place to search streams, build dashboards, monitor agent health, and deliver alerts.
 
-![A private Lina server rack](public/images/lina-server-rack.webp)
+![Lina wordmark](public/images/lina-wordmark-hero.webp)
 
 ## Install on a fresh host
 
@@ -72,13 +72,13 @@ The complete workflow is documented in [User guide](docs/USER_GUIDE.md).
 
 The one-command installation runs:
 
-| Service | Responsibility |
-| --- | --- |
-| `app` | Laravel 13, Inertia v3, React 19, and Apache |
-| `queue` | Database-backed Laravel queue worker |
-| `scheduler` | Alert evaluation and scheduled maintenance |
-| `loki` | Multi-tenant log storage and queries |
-| `caddy` | HTTP routing and automatic HTTPS |
+| Service     | Responsibility                               |
+| ----------- | -------------------------------------------- |
+| `app`       | Laravel 13, Inertia v3, React 19, and Apache |
+| `queue`     | Database-backed Laravel queue worker         |
+| `scheduler` | Alert evaluation and scheduled maintenance   |
+| `loki`      | Multi-tenant log storage and queries         |
+| `caddy`     | HTTP routing and automatic HTTPS             |
 
 Persistent data stays in `/opt/lina/database`, `/opt/lina/storage`, and Docker volumes for Loki and Caddy.
 
@@ -120,15 +120,15 @@ Local defaults live in `.env.example`. Production values are created in `/opt/li
 
 Important variables:
 
-| Variable | Purpose |
-| --- | --- |
-| `APP_URL` | Public URL used in links and agent configuration |
-| `LOKI_URL` | Internal Loki endpoint |
-| `LOKI_INGEST_RPM` | Per-agent ingest request limit |
-| `LOKI_OVERRIDES_PATH` | Runtime retention overrides file |
-| `MAIL_*` | Email notification transport |
-| `TELEGRAM_BOT_TOKEN` | Shared Telegram bot token |
-| `LINA_SITE_ADDRESS` | Domain for Caddy, or `:80` in IP mode |
+| Variable              | Purpose                                          |
+| --------------------- | ------------------------------------------------ |
+| `APP_URL`             | Public URL used in links and agent configuration |
+| `LOKI_URL`            | Internal Loki endpoint                           |
+| `LOKI_INGEST_RPM`     | Per-agent ingest request limit                   |
+| `LOKI_OVERRIDES_PATH` | Runtime retention overrides file                 |
+| `MAIL_*`              | Email notification transport                     |
+| `TELEGRAM_BOT_TOKEN`  | Shared Telegram bot token                        |
+| `LINA_SITE_ADDRESS`   | Domain for Caddy, or `:80` in IP mode            |
 
 Never rotate `APP_KEY` on a running installation. It protects encrypted application data and sessions.
 

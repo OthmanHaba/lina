@@ -31,3 +31,37 @@ test('the repository documentation covers installation usage architecture and op
             ->toContain($expectedText);
     }
 });
+
+test('the landing page uses the optimized Lina wordmark hero', function () {
+    $assetPath = public_path('images/lina-wordmark-hero.webp');
+    $pageSource = file_get_contents(resource_path('js/pages/welcome.tsx'));
+
+    expect($assetPath)
+        ->toBeFile()
+        ->and(filesize($assetPath))
+        ->toBeLessThan(100 * 1024)
+        ->and($pageSource)
+        ->toContain('/images/lina-wordmark-hero.webp')
+        ->not->toContain('/images/lina-server-rack.webp');
+});
+
+test('the application publishes the Lina favicon set', function () {
+    $icons = [
+        'favicon.ico',
+        'favicon-32x32.png',
+        'favicon-192x192.png',
+        'apple-touch-icon.png',
+    ];
+
+    foreach ($icons as $icon) {
+        expect(public_path($icon))->toBeFile();
+    }
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('href="/favicon.ico"', false)
+        ->assertSee('href="/favicon-32x32.png"', false)
+        ->assertSee('href="/favicon-192x192.png"', false)
+        ->assertSee('href="/apple-touch-icon.png"', false)
+        ->assertDontSee('/favicon.svg', false);
+});
