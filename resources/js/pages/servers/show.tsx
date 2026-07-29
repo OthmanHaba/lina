@@ -92,6 +92,9 @@ function SourceForm({
     onSuccess: () => void;
 }) {
     const [type, setType] = useState<LogSourceType>(source?.type ?? 'systemd');
+    const [inContainerPath, setInContainerPath] = useState(
+        source?.config.in_container_path ?? '',
+    );
 
     return (
         <Form
@@ -256,8 +259,9 @@ function SourceForm({
                                 <Input
                                     id="config_in_container_path"
                                     name="config_in_container_path"
-                                    defaultValue={
-                                        source?.config.in_container_path
+                                    value={inContainerPath}
+                                    onChange={(e) =>
+                                        setInContainerPath(e.target.value)
                                     }
                                     placeholder="/var/www/html/storage/logs"
                                 />
@@ -265,9 +269,26 @@ function SourceForm({
                                     message={errors['config.in_container_path']}
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    Lina tails <code>*.log</code> from this
-                                    directory after you mount it to the host.
+                                    Directory only — no <code>/*.log</code>.
+                                    Lina's agent runs on your host and can't
+                                    read inside a container, so after you save
+                                    you'll get one-time terminal commands to
+                                    mount this directory to the host.
                                 </p>
+                                {inContainerPath.trim() !== '' && (
+                                    <p className="text-xs text-muted-foreground">
+                                        Lina will tail{' '}
+                                        <code className="break-all">
+                                            {inContainerPath.replace(
+                                                /\/+$/,
+                                                '',
+                                            )}
+                                            /*.log
+                                        </code>{' '}
+                                        once mounted. Exact host path shown
+                                        after you save.
+                                    </p>
+                                )}
                             </div>
                         </>
                     )}
@@ -327,35 +348,73 @@ function ContainerMountPanel({
     };
 
     return (
-        <div className="mt-3 space-y-2 rounded-lg border bg-muted/30 p-3 text-sm">
-            <p className="font-mono text-xs break-all">
-                {mountInstructions.compose}
-            </p>
-            <p className="font-mono text-xs break-all text-muted-foreground">
-                {mountInstructions.dokploy}
-            </p>
+        <div className="mt-3 space-y-3 rounded-lg border bg-muted/30 p-3 text-sm">
             <p className="text-xs text-muted-foreground">
-                Apply this mount and recreate the container, then Lina will tail
-                the logs.
+                Lina's agent runs on your host and can't read files inside a
+                container. These one-time steps expose the log directory to the
+                host so the agent can tail it.
             </p>
-            <div className="flex items-center gap-2">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={checkForLogs}
-                    disabled={checking}
-                >
-                    Check for logs
-                </Button>
-                {result === 'found' && (
-                    <span className="text-success">Logs are arriving</span>
-                )}
-                {result === 'empty' && (
-                    <span className="text-muted-foreground">
-                        No logs yet — apply the mount above and recreate the
-                        container.
-                    </span>
-                )}
+
+            <div className="space-y-1">
+                <p className="text-xs font-medium">
+                    1. Prepare the host folder
+                </p>
+                <p className="rounded bg-background p-2 font-mono text-xs break-all">
+                    {mountInstructions.prepare}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                    So the container can write logs here and the agent can read
+                    them.
+                </p>
+            </div>
+
+            <div className="space-y-1">
+                <p className="text-xs font-medium">
+                    2. Add the mount and recreate the container
+                </p>
+                <p className="text-xs text-muted-foreground">
+                    docker compose — add under the service's{' '}
+                    <code>volumes:</code>, then recreate:
+                </p>
+                <p className="rounded bg-background p-2 font-mono text-xs break-all">
+                    {mountInstructions.compose}
+                </p>
+                <p className="rounded bg-background p-2 font-mono text-xs break-all">
+                    {mountInstructions.recreate}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                    or docker run — stop, remove, and re-run the container with:
+                </p>
+                <p className="rounded bg-background p-2 font-mono text-xs break-all">
+                    {mountInstructions.dockerRun}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                    On a managed platform, add the same bind mount in its UI and
+                    redeploy.
+                </p>
+            </div>
+
+            <div className="space-y-1">
+                <p className="text-xs font-medium">3. Verify</p>
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={checkForLogs}
+                        disabled={checking}
+                    >
+                        Check for logs
+                    </Button>
+                    {result === 'found' && (
+                        <span className="text-success">Logs are arriving</span>
+                    )}
+                    {result === 'empty' && (
+                        <span className="text-muted-foreground">
+                            No logs yet — apply the steps above and recreate the
+                            container.
+                        </span>
+                    )}
+                </div>
             </div>
         </div>
     );

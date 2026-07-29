@@ -36,7 +36,9 @@ export type LogSourceItem = {
         containerPath: string;
         compose: string;
         dockerRun: string;
-        dokploy: string;
+        prepare: string;
+        recreate: string;
+        tailGlob: string;
     };
 };
 
