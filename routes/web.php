@@ -13,6 +13,7 @@ use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
+Route::inertia('/docs', 'docs')->name('documentation');
 
 Route::get('install/{token}', InstallScriptController::class)->name('servers.install');
 

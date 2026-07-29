@@ -1,0 +1,86 @@
+name: lina
+
+x-lina-app: &lina-app
+  image: lina-app:local
+  env_file:
+    - .env.production
+  volumes:
+    - ./database:/var/www/html/database
+    - ./storage:/var/www/html/storage
+
+services:
+  app:
+    <<: *lina-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    expose:
+      - '80'
+    depends_on:
+      loki:
+        condition: service_started
+    healthcheck:
+      test: ['CMD', 'curl', '--fail', '--silent', 'http://127.0.0.1/up']
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
+
+  queue:
+    <<: *lina-app
+    user: '33:33'
+    command:
+      - php
+      - artisan
+      - queue:work
+      - --sleep=1
+      - --tries=3
+      - --timeout=90
+      - --max-time=3600
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+
+  scheduler:
+    <<: *lina-app
+    user: '33:33'
+    command: ['php', 'artisan', 'schedule:work']
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+
+  loki:
+    image: grafana/loki:3.4.2
+    command: -config.file=/etc/loki/loki-config.yaml
+    restart: unless-stopped
+    expose:
+      - '3100'
+    volumes:
+      - ./docker/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
+      - ./storage/app/loki:/etc/loki/runtime:ro
+      - loki-data:/loki
+
+  caddy:
+    image: caddy:2.10-alpine
+    env_file:
+      - .env.production
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./docker/production/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+
+volumes:
+  caddy-config:
+  caddy-data:
+  loki-data:
