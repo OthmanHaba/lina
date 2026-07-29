@@ -41,10 +41,21 @@ class SaveLogSourceRequest extends FormRequest
                 ],
                 LogSourceType::Container => [
                     'config.container' => ['required', 'string', 'max:255'],
-                    'config.in_container_path' => ['required', 'string', 'max:1024', 'starts_with:/'],
+                    'config.in_container_path' => [
+                        'required', 'string', 'max:1024', 'starts_with:/',
+                        'not_regex:/\*/', 'not_regex:/\/$/',
+                    ],
                 ],
                 default => [],
             } : []),
+        ];
+    }
+
+    /** @return array<string, string> */
+    public function messages(): array
+    {
+        return [
+            'config.in_container_path.not_regex' => 'Enter the directory only — no "*" glob or trailing slash.',
         ];
     }
 

@@ -7,10 +7,10 @@ use App\Models\LogSource;
 class ContainerMountInstructions
 {
     /**
-     * The copy-paste bind-mount guidance for a container source. The host path
+     * The copy-paste bind-mount runbook for a container source. The host path
      * is derived from the source id so it is always stable and unique.
      *
-     * @return array{hostPath: string, containerPath: string, compose: string, dockerRun: string, dokploy: string}
+     * @return array{hostPath: string, containerPath: string, compose: string, dockerRun: string, prepare: string, recreate: string, tailGlob: string}
      */
     public static function for(LogSource $source): array
     {
@@ -22,7 +22,9 @@ class ContainerMountInstructions
             'containerPath' => $containerPath,
             'compose' => "- {$hostPath}:{$containerPath}",
             'dockerRun' => "-v {$hostPath}:{$containerPath}",
-            'dokploy' => "Add a Bind mount — host path {$hostPath}, container path {$containerPath} — then redeploy the service so the container is recreated with the mount.",
+            'prepare' => "sudo mkdir -p {$hostPath} && sudo chmod 777 {$hostPath}",
+            'recreate' => 'docker compose up -d',
+            'tailGlob' => "{$hostPath}/*.log",
         ];
     }
 }

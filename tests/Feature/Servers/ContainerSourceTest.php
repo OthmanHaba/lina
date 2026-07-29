@@ -43,13 +43,47 @@ test('builds mount instructions from the source id and in-container path', funct
         'config' => ['container' => 'store-app', 'in_container_path' => '/var/www/html/storage/logs'],
     ]);
 
-    $instructions = ContainerMountInstructions::for($source);
+    $i = ContainerMountInstructions::for($source);
+    $host = '/var/log/lina/'.$source->id;
 
-    expect($instructions['hostPath'])->toBe('/var/log/lina/'.$source->id)
-        ->and($instructions['containerPath'])->toBe('/var/www/html/storage/logs')
-        ->and($instructions['compose'])->toBe('- /var/log/lina/'.$source->id.':/var/www/html/storage/logs')
-        ->and($instructions['dockerRun'])->toBe('-v /var/log/lina/'.$source->id.':/var/www/html/storage/logs')
-        ->and($instructions['dokploy'])->toContain('Bind mount');
+    expect($i['hostPath'])->toBe($host)
+        ->and($i['containerPath'])->toBe('/var/www/html/storage/logs')
+        ->and($i['compose'])->toBe("- {$host}:/var/www/html/storage/logs")
+        ->and($i['dockerRun'])->toBe("-v {$host}:/var/www/html/storage/logs")
+        ->and($i['prepare'])->toBe("sudo mkdir -p {$host} && sudo chmod 777 {$host}")
+        ->and($i['recreate'])->toBe('docker compose up -d')
+        ->and($i['tailGlob'])->toBe("{$host}/*.log")
+        ->and($i)->not->toHaveKey('dokploy');
+});
+
+it('rejects an in-container path containing a glob', function () {
+    [$user, $team, $server] = containerSourceOwner();
+
+    $this->actingAs($user)
+        ->post(route('servers.sources.store', ['current_team' => $team->slug, 'server' => $server->id]), [
+            'type' => 'container', 'name' => 'store-app',
+            'config' => ['container' => 'store-app', 'in_container_path' => '/var/www/html/storage/logs/*.log'],
+        ])->assertSessionHasErrors('config.in_container_path');
+});
+
+it('rejects an in-container path with a trailing slash', function () {
+    [$user, $team, $server] = containerSourceOwner();
+
+    $this->actingAs($user)
+        ->post(route('servers.sources.store', ['current_team' => $team->slug, 'server' => $server->id]), [
+            'type' => 'container', 'name' => 'store-app',
+            'config' => ['container' => 'store-app', 'in_container_path' => '/var/www/html/storage/logs/'],
+        ])->assertSessionHasErrors('config.in_container_path');
+});
+
+it('accepts a clean directory path', function () {
+    [$user, $team, $server] = containerSourceOwner();
+
+    $this->actingAs($user)
+        ->post(route('servers.sources.store', ['current_team' => $team->slug, 'server' => $server->id]), [
+            'type' => 'container', 'name' => 'store-app',
+            'config' => ['container' => 'store-app', 'in_container_path' => '/var/www/html/storage/logs'],
+        ])->assertRedirect();
 });
 
 test('creates a container source with valid config', function () {
