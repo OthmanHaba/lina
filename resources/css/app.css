@@ -7,8 +7,6 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-@custom-variant dark (&:is(.dark *));
-
 @theme {
     --font-sans:
         'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif,

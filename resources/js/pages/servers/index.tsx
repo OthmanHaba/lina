@@ -22,14 +22,14 @@ import { index, show, store } from '@/routes/servers';
 import type { ServerSummary } from '@/types';
 
 const statusVariant = {
-    online: 'default',
+    online: 'success',
     offline: 'destructive',
-    pending: 'secondary',
+    pending: 'warning',
 } as const;
 
 const statusDot = {
-    online: 'bg-emerald-500',
-    offline: 'bg-red-500',
+    online: 'bg-success',
+    offline: 'bg-destructive',
     pending: 'bg-muted-foreground/40',
 } as const;
 

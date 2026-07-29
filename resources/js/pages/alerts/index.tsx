@@ -363,7 +363,7 @@ function AlertRow({
                 <div className="flex items-center gap-2">
                     <Badge
                         variant={
-                            alert.state === 'firing' ? 'destructive' : 'default'
+                            alert.state === 'firing' ? 'destructive' : 'success'
                         }
                     >
                         {alert.state}
@@ -406,7 +406,7 @@ function AlertRow({
                                     variant={
                                         event.state === 'firing'
                                             ? 'destructive'
-                                            : 'default'
+                                            : 'success'
                                     }
                                 >
                                     {event.state}

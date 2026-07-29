@@ -40,9 +40,9 @@ import type {
 import { formatBytes } from './index';
 
 const statusVariant = {
-    online: 'default',
+    online: 'success',
     offline: 'destructive',
-    pending: 'secondary',
+    pending: 'warning',
 } as const;
 
 const typeLabels: Record<LogSourceType, string> = {
@@ -62,9 +62,9 @@ type Props = {
 };
 
 const configStatusMeta = {
-    synced: { dot: 'bg-emerald-500', label: 'In sync' },
-    syncing: { dot: 'bg-amber-500', label: 'Syncing…' },
-    unknown: { dot: 'bg-gray-400', label: 'Unknown' },
+    synced: { dot: 'bg-success', label: 'In sync' },
+    syncing: { dot: 'bg-warning', label: 'Syncing…' },
+    unknown: { dot: 'bg-muted-foreground/40', label: 'Unknown' },
 } as const;
 
 function splitLines(value: unknown): string[] | undefined {
@@ -160,7 +160,7 @@ function SourceForm({
                                 placeholder={
                                     'nginx.service\nphp8.4-fpm.service'
                                 }
-                                className="min-h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm"
+                                className="min-h-20 w-full rounded-md border bg-transparent px-3 py-2 font-mono text-sm"
                             />
                         </div>
                     )}
@@ -177,7 +177,7 @@ function SourceForm({
                                     '\n',
                                 )}
                                 placeholder={'web\nworker'}
-                                className="min-h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm"
+                                className="min-h-20 w-full rounded-md border bg-transparent px-3 py-2 font-mono text-sm"
                             />
                         </div>
                     )}
@@ -223,7 +223,7 @@ function SourceForm({
                                 name="config_paths"
                                 defaultValue={source?.config.paths?.join('\n')}
                                 placeholder="/var/log/app/*.log"
-                                className="min-h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm"
+                                className="min-h-20 w-full rounded-md border bg-transparent px-3 py-2 font-mono text-sm"
                             />
                             <InputError message={errors['config.paths']} />
                         </div>
@@ -372,7 +372,7 @@ export default function ServerShow({
                 </div>
 
                 {installCommand && (
-                    <div className="space-y-2 rounded-xl border border-amber-400/50 bg-amber-50 p-4 dark:bg-amber-950/20">
+                    <div className="space-y-2 rounded-xl border border-warning/40 bg-warning/10 p-4">
                         <p className="font-medium">
                             Run this on the server as root — the token is shown
                             only once:
