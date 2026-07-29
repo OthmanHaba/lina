@@ -8,4 +8,5 @@ enum LogSourceType: string
     case Docker = 'docker';
     case Nginx = 'nginx';
     case File = 'file';
+    case Container = 'container';
 }

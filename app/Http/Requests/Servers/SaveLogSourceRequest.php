@@ -39,6 +39,10 @@ class SaveLogSourceRequest extends FormRequest
                     'config.paths' => ['required', 'array', 'min:1'],
                     'config.paths.*' => ['string', 'max:1024'],
                 ],
+                LogSourceType::Container => [
+                    'config.container' => ['required', 'string', 'max:255'],
+                    'config.in_container_path' => ['required', 'string', 'max:1024', 'starts_with:/'],
+                ],
                 default => [],
             } : []),
         ];

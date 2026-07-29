@@ -41,6 +41,7 @@ class AlloyConfigRenderer
                     $source->config['error_log'] ?? '/var/log/nginx/error.log',
                 ]),
                 LogSourceType::File => $this->fileBlock($source, $source->config['paths'] ?? []),
+                LogSourceType::Container => $this->fileBlock($source, ['/var/log/lina/'.$source->id.'/*.log']),
             };
         }
 
