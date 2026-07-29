@@ -14,7 +14,8 @@ export type ServerDetail = ServerSummary & {
     retentionDays: number | null;
 };
 
-export type LogSourceType = 'systemd' | 'docker' | 'nginx' | 'file';
+export type LogSourceType =
+    'systemd' | 'docker' | 'nginx' | 'file' | 'container';
 
 export type LogSourceItem = {
     id: number;
@@ -26,8 +27,17 @@ export type LogSourceItem = {
         access_log?: string;
         error_log?: string;
         paths?: string[];
+        container?: string;
+        in_container_path?: string;
     };
     enabled: boolean;
+    mountInstructions?: {
+        hostPath: string;
+        containerPath: string;
+        compose: string;
+        dockerRun: string;
+        dokploy: string;
+    };
 };
 
 export type LogEntry = {

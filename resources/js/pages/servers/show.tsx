@@ -25,6 +25,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { query as logsQuery } from '@/routes/logs';
 import { destroy, index, show, token, update } from '@/routes/servers';
 import {
     destroy as destroySource,
@@ -50,6 +51,7 @@ const typeLabels: Record<LogSourceType, string> = {
     docker: 'Docker containers',
     nginx: 'Nginx',
     file: 'Log files',
+    container: 'File inside a container',
 };
 
 type Props = {
@@ -108,6 +110,8 @@ function SourceForm({
                     error_log:
                         (data['config_error_log'] as string) || undefined,
                     paths: splitLines(data['config_paths']),
+                    container: data['config_container'],
+                    in_container_path: data['config_in_container_path'],
                 },
             })}
             className="space-y-4"
@@ -229,6 +233,45 @@ function SourceForm({
                         </div>
                     )}
 
+                    {type === 'container' && (
+                        <>
+                            <div className="space-y-2">
+                                <Label htmlFor="config_container">
+                                    Container name
+                                </Label>
+                                <Input
+                                    id="config_container"
+                                    name="config_container"
+                                    defaultValue={source?.config.container}
+                                    placeholder="store-app"
+                                />
+                                <InputError
+                                    message={errors['config.container']}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="config_in_container_path">
+                                    Log directory inside the container
+                                </Label>
+                                <Input
+                                    id="config_in_container_path"
+                                    name="config_in_container_path"
+                                    defaultValue={
+                                        source?.config.in_container_path
+                                    }
+                                    placeholder="/var/www/html/storage/logs"
+                                />
+                                <InputError
+                                    message={errors['config.in_container_path']}
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    Lina tails <code>*.log</code> from this
+                                    directory after you mount it to the host.
+                                </p>
+                            </div>
+                        </>
+                    )}
+
                     <div className="flex items-center gap-2">
                         <Checkbox
                             id="source-enabled"
@@ -246,6 +289,75 @@ function SourceForm({
                 </>
             )}
         </Form>
+    );
+}
+
+function ContainerMountPanel({
+    server,
+    source,
+    mountInstructions,
+    teamSlug,
+}: {
+    server: ServerDetail;
+    source: LogSourceItem;
+    mountInstructions: NonNullable<LogSourceItem['mountInstructions']>;
+    teamSlug: string;
+}) {
+    const [checking, setChecking] = useState(false);
+    const [result, setResult] = useState<'found' | 'empty' | null>(null);
+
+    const checkForLogs = async () => {
+        setChecking(true);
+        setResult(null);
+
+        const params = new URLSearchParams({
+            servers: String(server.id),
+            sources: source.name,
+        });
+        const url =
+            logsQuery({ current_team: teamSlug }).url + '?' + params.toString();
+
+        const response = await fetch(url, {
+            headers: { Accept: 'application/json' },
+        });
+        const data = (await response.json()) as { entries: unknown[] };
+
+        setResult(data.entries?.length > 0 ? 'found' : 'empty');
+        setChecking(false);
+    };
+
+    return (
+        <div className="mt-3 space-y-2 rounded-lg border bg-muted/30 p-3 text-sm">
+            <p className="font-mono text-xs break-all">
+                {mountInstructions.compose}
+            </p>
+            <p className="font-mono text-xs break-all text-muted-foreground">
+                {mountInstructions.dokploy}
+            </p>
+            <p className="text-xs text-muted-foreground">
+                Apply this mount and recreate the container, then Lina will tail
+                the logs.
+            </p>
+            <div className="flex items-center gap-2">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={checkForLogs}
+                    disabled={checking}
+                >
+                    Check for logs
+                </Button>
+                {result === 'found' && (
+                    <span className="text-success">Logs are arriving</span>
+                )}
+                {result === 'empty' && (
+                    <span className="text-muted-foreground">
+                        No logs yet — apply the mount above and recreate the
+                        container.
+                    </span>
+                )}
+            </div>
+        </div>
     );
 }
 
@@ -575,50 +687,64 @@ export default function ServerShow({
                     ) : (
                         <div className="divide-y rounded-xl border">
                             {sources.map((source) => (
-                                <div
-                                    key={source.id}
-                                    className="flex items-center justify-between p-4"
-                                >
-                                    <div>
-                                        <p className="font-medium">
-                                            {source.name}
-                                            {!source.enabled && (
-                                                <Badge
-                                                    variant="secondary"
-                                                    className="ml-2"
-                                                >
-                                                    disabled
-                                                </Badge>
-                                            )}
-                                        </p>
-                                        <p className="text-sm text-muted-foreground">
-                                            {typeLabels[source.type]}
-                                        </p>
+                                <div key={source.id} className="p-4">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="font-medium">
+                                                {source.name}
+                                                {!source.enabled && (
+                                                    <Badge
+                                                        variant="secondary"
+                                                        className="ml-2"
+                                                    >
+                                                        disabled
+                                                    </Badge>
+                                                )}
+                                            </p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {typeLabels[source.type]}
+                                            </p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() =>
+                                                    setEditing(source)
+                                                }
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() =>
+                                                    router.delete(
+                                                        destroySource({
+                                                            current_team:
+                                                                teamSlug,
+                                                            server: server.id,
+                                                            source: source.id,
+                                                        }),
+                                                    )
+                                                }
+                                            >
+                                                <Trash2 className="size-4" />
+                                            </Button>
+                                        </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setEditing(source)}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() =>
-                                                router.delete(
-                                                    destroySource({
-                                                        current_team: teamSlug,
-                                                        server: server.id,
-                                                        source: source.id,
-                                                    }),
-                                                )
-                                            }
-                                        >
-                                            <Trash2 className="size-4" />
-                                        </Button>
-                                    </div>
+
+                                    {source.type === 'container' &&
+                                        source.mountInstructions && (
+                                            <ContainerMountPanel
+                                                server={server}
+                                                source={source}
+                                                mountInstructions={
+                                                    source.mountInstructions
+                                                }
+                                                teamSlug={teamSlug}
+                                            />
+                                        )}
                                 </div>
                             ))}
                         </div>

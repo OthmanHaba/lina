@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Servers;
 
+use App\Enums\LogSourceType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Servers\StoreServerRequest;
 use App\Models\LogSource;
 use App\Models\Server;
+use App\Services\ContainerMountInstructions;
 use App\Services\LokiOverridesWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -85,6 +87,9 @@ class ServerController extends Controller
                 'name' => $source->name,
                 'config' => $source->config ?? [],
                 'enabled' => $source->enabled,
+                'mountInstructions' => $source->type === LogSourceType::Container
+                    ? ContainerMountInstructions::for($source)
+                    : null,
             ]),
             'plainToken' => session('plainToken'),
             'installBaseUrl' => url('/install'),
