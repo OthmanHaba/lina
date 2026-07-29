@@ -21,7 +21,7 @@ export default function StatWidget({
 
     return (
         <div className="flex h-full min-h-24 flex-col justify-center gap-1">
-            <span className="text-3xl font-semibold tabular-nums">
+            <span className="font-mono text-3xl font-semibold tabular-nums">
                 {formatter.format(data.value)}
             </span>
             <span className="flex items-center gap-1 text-xs text-muted-foreground">

@@ -29,7 +29,7 @@ export default function LogStreamWidget({ data }: { data: LogStreamData }) {
                                 variant={
                                     level === 'error'
                                         ? 'destructive'
-                                        : 'secondary'
+                                        : 'warning'
                                 }
                                 className="h-4 px-1 text-[10px] uppercase"
                             >

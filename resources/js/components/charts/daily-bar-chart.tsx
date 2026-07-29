@@ -44,7 +44,13 @@ export default function DailyBarChart({
                 />
                 <Tooltip
                     formatter={(value) => formatValue(value as number)}
-                    contentStyle={{ fontSize: 12 }}
+                    contentStyle={{
+                        fontSize: 12,
+                        background: '#1d222c',
+                        border: '1px solid #232833',
+                        borderRadius: 9,
+                        color: '#dde3ee',
+                    }}
                 />
                 <Bar
                     dataKey="value"

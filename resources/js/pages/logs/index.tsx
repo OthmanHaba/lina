@@ -60,10 +60,7 @@ function LogRow({ entry }: { entry: LogEntry }) {
                 </Badge>
             )}
             {level === 'warn' && (
-                <Badge
-                    variant="secondary"
-                    className="shrink-0 bg-amber-500/15 text-amber-600 dark:text-amber-400"
-                >
+                <Badge variant="warning" className="shrink-0">
                     warn
                 </Badge>
             )}
@@ -291,7 +288,7 @@ export default function LogsIndex({ servers, sources }: Props) {
 
                     <div className="flex items-center gap-2">
                         {live && (
-                            <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
+                            <span className="size-2 animate-pulse rounded-full bg-primary shadow-glow" />
                         )}
                         <Button
                             variant={live ? 'default' : 'outline'}

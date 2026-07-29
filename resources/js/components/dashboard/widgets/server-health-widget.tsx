@@ -4,9 +4,9 @@ import type { ServerHealthData } from '@/types/dashboard';
 // Server::status() (app/Models/Server.php) returns only 'pending' | 'online' | 'offline'.
 // 'stale' is kept for forward-compat with the brief's spec but never occurs today.
 const DOT: Record<string, string> = {
-    online: 'bg-emerald-500',
-    stale: 'bg-amber-500',
-    offline: 'bg-red-500',
+    online: 'bg-success',
+    stale: 'bg-warning',
+    offline: 'bg-destructive',
     pending: 'bg-muted-foreground/40',
 };
 

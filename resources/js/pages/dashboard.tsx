@@ -217,6 +217,9 @@ export default function Dashboard({
                             ))}
                         </SelectContent>
                     </Select>
+                    {autoRefresh && (
+                        <span className="size-2 animate-pulse rounded-full bg-primary shadow-glow" />
+                    )}
                     <Button
                         variant={autoRefresh ? 'default' : 'outline'}
                         size="sm"

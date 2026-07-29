@@ -103,7 +103,13 @@ export default function TimeseriesWidget({
                 />
                 <Tooltip
                     labelFormatter={(ts) => formatTick(ts as number, range)}
-                    contentStyle={{ fontSize: 12 }}
+                    contentStyle={{
+                        fontSize: 12,
+                        background: '#1d222c',
+                        border: '1px solid #232833',
+                        borderRadius: 9,
+                        color: '#dde3ee',
+                    }}
                 />
                 {data.series.map((series, index) => {
                     const color = CHART_COLORS[index % CHART_COLORS.length];
