@@ -1,5 +1,12 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Bell, BookOpen, FolderGit2, LayoutGrid, ScrollText, Server } from 'lucide-react';
+import {
+    Bell,
+    BookOpen,
+    FolderGit2,
+    LayoutGrid,
+    ScrollText,
+    Server,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
