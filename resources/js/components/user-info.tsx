@@ -27,12 +27,12 @@ export function UserInfo({
             <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
                 {team ? (
-                    <span className="truncate text-xs text-muted-foreground">
+                    <span className="truncate text-xs text-foreground/70">
                         {team.name}
                     </span>
                 ) : null}
                 {!team && showEmail ? (
-                    <span className="truncate text-xs text-muted-foreground">
+                    <span className="truncate text-xs text-foreground/70">
                         {user.email}
                     </span>
                 ) : null}

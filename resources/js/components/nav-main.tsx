@@ -14,7 +14,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
 
     return (
         <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel className="text-[11px] tracking-[0.1em] text-muted-foreground uppercase">
+            <SidebarGroupLabel className="text-[11px] tracking-[0.1em] text-foreground/70 uppercase">
                 Platform
             </SidebarGroupLabel>
             <SidebarMenu>

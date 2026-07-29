@@ -32,7 +32,7 @@ export default function AuthSplitLayout({
                     </Link>
                     <div className="flex flex-col items-start gap-2 text-left sm:items-center sm:text-center">
                         <h1 className="text-xl font-medium">{title}</h1>
-                        <p className="text-sm text-balance text-muted-foreground">
+                        <p className="text-sm text-balance text-foreground/70">
                             {description}
                         </p>
                     </div>

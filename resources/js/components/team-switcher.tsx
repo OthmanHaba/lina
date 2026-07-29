@@ -106,7 +106,7 @@ export function TeamSwitcher({ inHeader = false }: TeamSwitcherProps) {
                 align={inHeader ? 'end' : 'start'}
                 sideOffset={inHeader ? undefined : 4}
             >
-                <DropdownMenuLabel className="text-xs text-muted-foreground">
+                <DropdownMenuLabel className="text-xs text-foreground/70">
                     Teams
                 </DropdownMenuLabel>
                 {teams.map((team) => (
@@ -144,7 +144,7 @@ export function TeamSwitcher({ inHeader = false }: TeamSwitcherProps) {
                         onSelect={(event) => event.preventDefault()}
                     >
                         <Plus className={inHeader ? 'size-4' : 'h-4 w-4'} />
-                        <span className="text-muted-foreground">New team</span>
+                        <span className="text-foreground/70">New team</span>
                     </DropdownMenuItem>
                 </CreateTeamModal>
             </DropdownMenuContent>

@@ -17,7 +17,7 @@ export default function ServerHealthWidget({
 }) {
     if (data.servers.length === 0) {
         return (
-            <p className="flex h-full min-h-24 items-center justify-center text-sm text-muted-foreground">
+            <p className="flex h-full min-h-24 items-center justify-center text-sm text-foreground/70">
                 No servers connected.
             </p>
         );
@@ -36,7 +36,7 @@ export default function ServerHealthWidget({
                     <span className="min-w-0 flex-1 truncate">
                         {server.name}
                     </span>
-                    <span className="text-xs text-muted-foreground capitalize">
+                    <span className="text-xs text-foreground/70 capitalize">
                         {server.status}
                     </span>
                 </li>

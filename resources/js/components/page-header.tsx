@@ -16,9 +16,7 @@ export default function PageHeader({
                     {title}
                 </h1>
                 {description && (
-                    <p className="text-sm text-muted-foreground">
-                        {description}
-                    </p>
+                    <p className="text-sm text-foreground/70">{description}</p>
                 )}
             </div>
             {action && (

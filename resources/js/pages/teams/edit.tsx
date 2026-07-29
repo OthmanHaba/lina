@@ -140,7 +140,7 @@ export default function TeamEdit({
                                                 }
                                                 required
                                             />
-                                            <p className="text-sm text-muted-foreground">
+                                            <p className="text-sm text-foreground/70">
                                                 How long logs are kept. Lowering
                                                 this permanently deletes logs
                                                 older than the new value.
@@ -215,7 +215,7 @@ export default function TeamEdit({
                                         <div className="font-medium">
                                             {member.name}
                                         </div>
-                                        <div className="text-sm text-muted-foreground">
+                                        <div className="text-sm text-foreground/70">
                                             {member.email}
                                         </div>
                                     </div>
@@ -305,13 +305,13 @@ export default function TeamEdit({
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                                            <Mail className="h-5 w-5 text-muted-foreground" />
+                                            <Mail className="h-5 w-5 text-foreground/70" />
                                         </div>
                                         <div>
                                             <div className="font-medium">
                                                 {invitation.email}
                                             </div>
-                                            <div className="text-sm text-muted-foreground">
+                                            <div className="text-sm text-foreground/70">
                                                 {invitation.role_label}
                                             </div>
                                         </div>

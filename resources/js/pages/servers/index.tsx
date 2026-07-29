@@ -67,7 +67,7 @@ export default function ServersIndex({ servers }: Props) {
         <>
             <Head title="Servers" />
 
-            <div className="flex flex-col space-y-6">
+            <div className="flex flex-col space-y-6 p-4">
                 <PageHeader
                     title="Servers"
                     description="Connect Linux servers and manage their log sources."
@@ -131,12 +131,7 @@ export default function ServersIndex({ servers }: Props) {
                     <EmptyState
                         icon={ServerIcon}
                         title="No servers yet"
-                        description="Connect your first server to start shipping logs."
-                        action={
-                            <Button onClick={() => setOpen(true)}>
-                                <Plus className="size-4" /> Add server
-                            </Button>
-                        }
+                        description="Connect your first server using the button above to start shipping logs."
                     />
                 ) : (
                     <div className="divide-y rounded-xl border">
@@ -159,16 +154,17 @@ export default function ServersIndex({ servers }: Props) {
                                     <p className="truncate text-sm font-medium">
                                         {server.name}
                                     </p>
-                                    <p className="truncate text-sm text-muted-foreground">
+                                    <p className="truncate text-sm text-foreground/70">
                                         {server.hostname ?? 'Not connected yet'}
                                     </p>
                                 </div>
                                 <div className="flex shrink-0 items-center gap-4">
-                                    <span className="text-sm text-muted-foreground">
+                                    <span className="text-sm text-foreground/70">
                                         {formatBytes(server.bytesToday)} today
                                     </span>
                                     <Badge
                                         variant={statusVariant[server.status]}
+                                        className="capitalize"
                                     >
                                         {server.status}
                                     </Badge>

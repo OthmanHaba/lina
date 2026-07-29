@@ -44,7 +44,7 @@ export default function TimeseriesWidget({
         data.series.every((s) => s.points.length === 0)
     ) {
         return (
-            <p className="flex h-full min-h-24 items-center justify-center text-sm text-muted-foreground">
+            <p className="flex h-full min-h-24 items-center justify-center text-sm text-foreground/70">
                 No logs in this range.
             </p>
         );

@@ -5,7 +5,7 @@ import type { LogStreamData } from '@/types/dashboard';
 export default function LogStreamWidget({ data }: { data: LogStreamData }) {
     if (data.entries.length === 0) {
         return (
-            <p className="flex h-full min-h-24 items-center justify-center text-sm text-muted-foreground">
+            <p className="flex h-full min-h-24 items-center justify-center text-sm text-foreground/70">
                 No logs yet.
             </p>
         );
@@ -21,7 +21,7 @@ export default function LogStreamWidget({ data }: { data: LogStreamData }) {
                         key={entry.ts}
                         className="flex items-baseline gap-2 py-1 hover:bg-muted/50"
                     >
-                        <span className="shrink-0 text-muted-foreground">
+                        <span className="shrink-0 text-foreground/70">
                             {new Date(entry.time).toLocaleTimeString()}
                         </span>
                         {level && (

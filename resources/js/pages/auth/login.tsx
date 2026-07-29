@@ -103,7 +103,7 @@ export default function Login({
                             </Button>
                         </div>
 
-                        <div className="text-center text-sm text-muted-foreground">
+                        <div className="text-center text-sm text-foreground/70">
                             Don't have an account?{' '}
                             <TextLink
                                 href={register({

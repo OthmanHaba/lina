@@ -200,51 +200,49 @@ export default function Dashboard({
                 onOpenChange={setShowInvitations}
             />
             <div className="flex flex-col gap-4 p-4">
-                <div className="flex items-center gap-2">
-                    <h1 className="flex-1 text-lg font-semibold">Dashboard</h1>
-                    <Select
-                        value={range}
-                        onValueChange={(value) => setRange(value as TimeRange)}
-                    >
-                        <SelectTrigger className="w-40">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {RANGES.map((r) => (
-                                <SelectItem key={r.value} value={r.value}>
-                                    {r.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    {autoRefresh && (
-                        <span className="size-2 animate-pulse rounded-full bg-primary shadow-glow" />
-                    )}
-                    <Button
-                        variant={autoRefresh ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setAutoRefresh(!autoRefresh)}
-                    >
-                        <RefreshCw className="size-4" />{' '}
-                        {autoRefresh ? '30s' : 'Off'}
-                    </Button>
-                    <Button
-                        size="sm"
-                        onClick={() => {
-                            setEditingWidget(null);
-                            setDialogOpen(true);
-                        }}
-                    >
-                        <Plus className="size-4" /> Add widget
-                    </Button>
-                </div>
-
-                {orderedWidgets.length === 0 ? (
-                    <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
-                        <LayoutDashboard className="size-8 text-muted-foreground" />
-                        <p className="font-medium">Your dashboard is empty</p>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <h1 className="text-lg font-semibold sm:flex-1">
+                        Dashboard
+                    </h1>
+                    <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
+                        <Select
+                            value={range}
+                            onValueChange={(value) =>
+                                setRange(value as TimeRange)
+                            }
+                        >
+                            <SelectTrigger
+                                className="w-full sm:w-40"
+                                aria-label="Dashboard time range"
+                            >
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {RANGES.map((r) => (
+                                    <SelectItem key={r.value} value={r.value}>
+                                        {r.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <Button
+                            variant={autoRefresh ? 'default' : 'outline'}
+                            size="sm"
+                            aria-pressed={autoRefresh}
+                            aria-label={`Auto refresh: ${
+                                autoRefresh ? 'every 30 seconds' : 'off'
+                            }`}
+                            onClick={() => setAutoRefresh(!autoRefresh)}
+                        >
+                            {autoRefresh && (
+                                <span className="size-2 animate-pulse rounded-full bg-primary-foreground shadow-glow" />
+                            )}
+                            <RefreshCw className="size-4" />
+                            {autoRefresh ? '30s' : 'Off'}
+                        </Button>
                         <Button
                             size="sm"
+                            className="col-span-2 w-full sm:w-auto"
                             onClick={() => {
                                 setEditingWidget(null);
                                 setDialogOpen(true);
@@ -252,6 +250,16 @@ export default function Dashboard({
                         >
                             <Plus className="size-4" /> Add widget
                         </Button>
+                    </div>
+                </div>
+
+                {orderedWidgets.length === 0 ? (
+                    <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+                        <LayoutDashboard className="size-8 text-foreground/70" />
+                        <p className="font-medium">Your dashboard is empty</p>
+                        <p className="text-sm text-foreground/70">
+                            Add a widget using the button above.
+                        </p>
                     </div>
                 ) : (
                     <DndContext

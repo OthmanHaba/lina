@@ -111,7 +111,7 @@ export default function Register({ passwordRules, teamInvitation }: Props) {
                             </Button>
                         </div>
 
-                        <div className="text-center text-sm text-muted-foreground">
+                        <div className="text-center text-sm text-foreground/70">
                             Already have an account?{' '}
                             <TextLink
                                 href={

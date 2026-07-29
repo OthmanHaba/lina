@@ -39,7 +39,7 @@ export default function Welcome() {
                     <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
                         Ship your logs. Watch them. Get alerted.
                     </h1>
-                    <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
+                    <p className="mt-6 max-w-2xl text-lg text-foreground/70">
                         Connect a Linux server in one command, build dashboards
                         over your logs, and get notified the moment something
                         goes quiet or noisy.
@@ -47,9 +47,7 @@ export default function Welcome() {
                     <div className="mt-10 flex flex-wrap items-center gap-3">
                         {auth.user ? (
                             <Button asChild size="lg">
-                                <Link href={dashboardUrl}>
-                                    Go to dashboard
-                                </Link>
+                                <Link href={dashboardUrl}>Go to dashboard</Link>
                             </Button>
                         ) : (
                             <>
@@ -64,7 +62,7 @@ export default function Welcome() {
                     </div>
 
                     <div className="mt-16 overflow-x-auto rounded-xl border border-border bg-card p-4">
-                        <code className="font-mono text-sm text-muted-foreground">
+                        <code className="font-mono text-sm whitespace-nowrap text-foreground/70">
                             <span className="text-primary">$</span> curl -sSL
                             lina.test/install/&lt;token&gt; | sudo bash
                         </code>

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import DailyBarChart from '@/components/charts/daily-bar-chart';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
+import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -268,7 +269,7 @@ function SourceForm({
                                 <InputError
                                     message={errors['config.in_container_path']}
                                 />
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-foreground/70">
                                     Directory only — no <code>/*.log</code>.
                                     Lina's agent runs on your host and can't
                                     read inside a container, so after you save
@@ -276,7 +277,7 @@ function SourceForm({
                                     mount this directory to the host.
                                 </p>
                                 {inContainerPath.trim() !== '' && (
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-foreground/70">
                                         Lina will tail{' '}
                                         <code className="break-all">
                                             {inContainerPath.replace(
@@ -349,7 +350,7 @@ function ContainerMountPanel({
 
     return (
         <div className="mt-3 space-y-3 rounded-lg border bg-muted/30 p-3 text-sm">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-foreground/70">
                 Lina's agent runs on your host and can't read files inside a
                 container. These one-time steps expose the log directory to the
                 host so the agent can tail it.
@@ -362,7 +363,7 @@ function ContainerMountPanel({
                 <p className="rounded bg-background p-2 font-mono text-xs break-all">
                     {mountInstructions.prepare}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-foreground/70">
                     So the container can write logs here and the agent can read
                     them.
                 </p>
@@ -372,7 +373,7 @@ function ContainerMountPanel({
                 <p className="text-xs font-medium">
                     2. Add the mount and recreate the container
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-foreground/70">
                     docker compose — add under the service's{' '}
                     <code>volumes:</code>, then recreate:
                 </p>
@@ -382,13 +383,13 @@ function ContainerMountPanel({
                 <p className="rounded bg-background p-2 font-mono text-xs break-all">
                     {mountInstructions.recreate}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-foreground/70">
                     or docker run — stop, remove, and re-run the container with:
                 </p>
                 <p className="rounded bg-background p-2 font-mono text-xs break-all">
                     {mountInstructions.dockerRun}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-foreground/70">
                     On a managed platform, add the same bind mount in its UI and
                     redeploy.
                 </p>
@@ -409,7 +410,7 @@ function ContainerMountPanel({
                         <span className="text-success">Logs are arriving</span>
                     )}
                     {result === 'empty' && (
-                        <span className="text-muted-foreground">
+                        <span className="text-foreground/70">
                             No logs yet — apply the steps above and recreate the
                             container.
                         </span>
@@ -485,7 +486,7 @@ function RetentionCard({
                     </div>
                 )}
 
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-foreground/70">
                     How long logs are kept. Lowering this permanently deletes
                     logs older than the new value.
                 </p>
@@ -530,17 +531,19 @@ export default function ServerShow({
         <>
             <Head title={server.name} />
 
-            <div className="flex flex-col space-y-6">
-                <div className="flex items-center justify-between">
-                    <Heading
-                        variant="small"
-                        title={server.name}
-                        description={server.hostname ?? 'Not connected yet'}
-                    />
-                    <Badge variant={statusVariant[server.status]}>
-                        {server.status}
-                    </Badge>
-                </div>
+            <div className="flex flex-col space-y-6 p-4">
+                <PageHeader
+                    title={server.name}
+                    description={server.hostname ?? 'Not connected yet'}
+                    action={
+                        <Badge
+                            variant={statusVariant[server.status]}
+                            className="capitalize"
+                        >
+                            {server.status}
+                        </Badge>
+                    }
+                />
 
                 {installCommand && (
                     <div className="space-y-2 rounded-xl border border-warning/40 bg-warning/10 p-4">
@@ -567,7 +570,7 @@ export default function ServerShow({
                 <div className="grid gap-4 text-sm md:grid-cols-3">
                     <Card className="gap-1 py-4">
                         <CardHeader className="px-4">
-                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                            <CardTitle className="text-sm font-medium text-foreground/70">
                                 Last seen
                             </CardTitle>
                         </CardHeader>
@@ -583,7 +586,7 @@ export default function ServerShow({
                     </Card>
                     <Card className="gap-1 py-4">
                         <CardHeader className="px-4">
-                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                            <CardTitle className="text-sm font-medium text-foreground/70">
                                 Agent
                             </CardTitle>
                         </CardHeader>
@@ -595,7 +598,7 @@ export default function ServerShow({
                     </Card>
                     <Card className="gap-1 py-4">
                         <CardHeader className="px-4">
-                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                            <CardTitle className="text-sm font-medium text-foreground/70">
                                 Ingested today
                             </CardTitle>
                         </CardHeader>
@@ -613,7 +616,7 @@ export default function ServerShow({
                     <div className="grid gap-4 text-sm md:grid-cols-3">
                         <Card className="gap-1 py-4">
                             <CardHeader className="px-4">
-                                <CardTitle className="text-sm font-medium text-muted-foreground">
+                                <CardTitle className="text-sm font-medium text-foreground/70">
                                     Last config poll
                                 </CardTitle>
                             </CardHeader>
@@ -629,7 +632,7 @@ export default function ServerShow({
                         </Card>
                         <Card className="gap-1 py-4">
                             <CardHeader className="px-4">
-                                <CardTitle className="text-sm font-medium text-muted-foreground">
+                                <CardTitle className="text-sm font-medium text-foreground/70">
                                     Last log push
                                 </CardTitle>
                             </CardHeader>
@@ -645,7 +648,7 @@ export default function ServerShow({
                         </Card>
                         <Card className="gap-1 py-4">
                             <CardHeader className="px-4">
-                                <CardTitle className="text-sm font-medium text-muted-foreground">
+                                <CardTitle className="text-sm font-medium text-foreground/70">
                                     Config
                                 </CardTitle>
                             </CardHeader>
@@ -660,7 +663,7 @@ export default function ServerShow({
                                     }
                                 </p>
                                 {health.configStatus === 'synced' && (
-                                    <p className="text-muted-foreground">
+                                    <p className="text-foreground/70">
                                         {health.configSyncedAt
                                             ? new Date(
                                                   health.configSyncedAt,
@@ -680,7 +683,7 @@ export default function ServerShow({
                         </CardHeader>
                         <CardContent className="px-4">
                             {health.usage.every((day) => day.bytes === 0) ? (
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-foreground/70">
                                     No ingest in the last 14 days
                                 </p>
                             ) : (
@@ -739,7 +742,7 @@ export default function ServerShow({
                     </div>
 
                     {sources.length === 0 ? (
-                        <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
+                        <p className="rounded-xl border border-dashed p-6 text-center text-sm text-foreground/70">
                             No sources yet — this server isn't collecting
                             anything.
                         </p>
@@ -760,7 +763,7 @@ export default function ServerShow({
                                                     </Badge>
                                                 )}
                                             </p>
-                                            <p className="text-sm text-muted-foreground">
+                                            <p className="text-sm text-foreground/70">
                                                 {typeLabels[source.type]}
                                             </p>
                                         </div>

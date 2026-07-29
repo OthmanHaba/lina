@@ -4,7 +4,7 @@ import type { AlertStatusData } from '@/types/dashboard';
 export default function AlertStatusWidget({ data }: { data: AlertStatusData }) {
     if (data.alerts.length === 0) {
         return (
-            <p className="flex h-full min-h-24 items-center justify-center text-sm text-muted-foreground">
+            <p className="flex h-full min-h-24 items-center justify-center text-sm text-foreground/70">
                 No alerts configured.
             </p>
         );

@@ -24,7 +24,7 @@ export default function StatWidget({
             <span className="font-mono text-3xl font-semibold tabular-nums">
                 {formatter.format(data.value)}
             </span>
-            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1 text-xs text-foreground/70">
                 {delta === null ? (
                     <Minus className="size-3" />
                 ) : delta >= 0 ? (

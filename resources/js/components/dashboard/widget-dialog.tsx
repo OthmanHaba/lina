@@ -238,7 +238,7 @@ function WidgetForm({
                     <div className="space-y-2">
                         <Label>Servers (empty = all)</Label>
                         {servers.length === 0 ? (
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-foreground/70">
                                 No servers yet.
                             </p>
                         ) : (
@@ -273,7 +273,7 @@ function WidgetForm({
                     <div className="space-y-2">
                         <Label>Sources (empty = all)</Label>
                         {sources.length === 0 ? (
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-foreground/70">
                                 No sources yet.
                             </p>
                         ) : (
@@ -459,12 +459,12 @@ function WidgetForm({
                                         setLogql(event.target.value)
                                     }
                                     className={cn(
-                                        'flex w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+                                        'flex w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-foreground/70 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
                                         'font-mono',
                                     )}
                                     placeholder='{source="nginx"} |= "500"'
                                 />
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-foreground/70">
                                     When set, this query replaces the filters
                                     above. It runs inside your team's tenant
                                     only.
@@ -526,11 +526,11 @@ export default function WidgetDialog({
                                     onClick={() => setPickedType(option.value)}
                                     className="flex flex-col items-start gap-2 rounded-lg border p-4 text-left transition-colors hover:border-primary hover:bg-accent"
                                 >
-                                    <Icon className="size-5 text-muted-foreground" />
+                                    <Icon className="size-5 text-foreground/70" />
                                     <span className="font-medium">
                                         {option.label}
                                     </span>
-                                    <span className="text-sm text-muted-foreground">
+                                    <span className="text-sm text-foreground/70">
                                         {option.description}
                                     </span>
                                 </button>

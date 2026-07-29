@@ -36,7 +36,7 @@ export default function WidgetFrame({
             <CardHeader className="flex flex-row items-center gap-1 px-4">
                 <button
                     type="button"
-                    className="cursor-grab text-muted-foreground/50 hover:text-muted-foreground"
+                    className="-m-2 flex size-11 cursor-grab items-center justify-center text-foreground/60 hover:text-foreground/70 sm:-m-1 sm:size-8"
                     aria-label="Move widget"
                     {...dragHandleProps}
                 >
@@ -51,7 +51,7 @@ export default function WidgetFrame({
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="size-7"
+                                className="size-11 sm:size-8"
                                 aria-label="Widget options"
                             >
                                 <MoreVertical className="size-4" />

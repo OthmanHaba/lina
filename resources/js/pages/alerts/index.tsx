@@ -165,7 +165,7 @@ function AlertForm({
                     <div className="space-y-2">
                         <Label>Servers (empty = all)</Label>
                         {servers.length === 0 ? (
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-foreground/70">
                                 No servers yet.
                             </p>
                         ) : (
@@ -265,7 +265,7 @@ function AlertForm({
                     <div className="space-y-2">
                         <Label>Notify channels</Label>
                         {channels.length === 0 ? (
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-foreground/70">
                                 No channels yet — add one below.
                             </p>
                         ) : (
@@ -292,7 +292,7 @@ function AlertForm({
                                             className="font-normal"
                                         >
                                             {channel.name}{' '}
-                                            <span className="text-muted-foreground">
+                                            <span className="text-foreground/70">
                                                 (
                                                 {
                                                     channelTypeLabels[
@@ -355,7 +355,7 @@ function AlertRow({
                             </Badge>
                         )}
                     </p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-foreground/70">
                         {alertTypeLabels[alert.type]} · last change{' '}
                         {formatTime(alert.lastStateChangeAt)}
                     </p>
@@ -393,7 +393,7 @@ function AlertRow({
             {expanded && (
                 <div className="mt-3 space-y-1">
                     {alert.events.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-foreground/70">
                             No recent state changes.
                         </p>
                     ) : (
@@ -411,10 +411,10 @@ function AlertRow({
                                 >
                                     {event.state}
                                 </Badge>
-                                <span className="text-muted-foreground">
+                                <span className="text-foreground/70">
                                     measured {event.measuredValue}
                                 </span>
-                                <span className="text-muted-foreground">
+                                <span className="text-foreground/70">
                                     {new Date(event.createdAt).toLocaleString()}
                                 </span>
                             </div>
@@ -521,7 +521,7 @@ function ChannelForm({
                                 defaultValue={channel?.config.url}
                                 placeholder="https://example.com/hooks/alerts"
                             />
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-foreground/70">
                                 POSTed as JSON:{' '}
                                 {
                                     '{ alert: {id, name, type}, state, measured_value, threshold, window_minutes, servers, sources, search, fired_at, url }'
@@ -540,7 +540,7 @@ function ChannelForm({
                                 defaultValue={channel?.config.chat_id}
                                 placeholder="123456789"
                             />
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-foreground/70">
                                 Message the bot, then paste your chat ID here.
                             </p>
                             <InputError message={errors['config.chat_id']} />
@@ -586,7 +586,7 @@ export default function AlertsIndex({
         <>
             <Head title="Alerts" />
 
-            <div className="flex flex-col space-y-8">
+            <div className="flex flex-col space-y-8 p-4">
                 <PageHeader
                     title="Alerts"
                     description="Get notified when your logs go quiet or noisy."
@@ -625,12 +625,7 @@ export default function AlertsIndex({
                         <EmptyState
                             icon={BellRing}
                             title="No alerts yet"
-                            description="Create an alert to watch your logs for you."
-                            action={
-                                <Button onClick={() => setAddAlertOpen(true)}>
-                                    <Plus className="size-4" /> Add alert
-                                </Button>
-                            }
+                            description="Create an alert using the button above to watch your logs for you."
                         />
                     ) : (
                         <div className="divide-y rounded-xl border">
@@ -711,15 +706,7 @@ export default function AlertsIndex({
                         <EmptyState
                             icon={Send}
                             title="No notification channels"
-                            description="Add a webhook, email, or Telegram channel first."
-                            action={
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setAddChannelOpen(true)}
-                                >
-                                    <Plus className="size-4" /> Add channel
-                                </Button>
-                            }
+                            description="Add a webhook, email, or Telegram channel using the button above."
                         />
                     ) : (
                         <div className="divide-y rounded-xl border">
@@ -750,7 +737,7 @@ export default function AlertsIndex({
                                                     </Badge>
                                                 )}
                                         </p>
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-sm text-foreground/70">
                                             {channelTypeLabels[channel.type]}
                                         </p>
                                     </div>
